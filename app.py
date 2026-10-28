@@ -36,11 +36,20 @@ LABELS_PATH = os.path.join(ASL_OUTPUT_DIR, "labels.json")
 # GitHub raw base URL for automatic on-demand model download if missing
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/mirza-hannan-baber/asl-alphabet-deep-learning/main"
 
-def ensure_file_exists(local_path, github_rel_path):
-    """Auto-downloads model/labels from GitHub if missing in cloud deployment."""
-    if not os.path.exists(local_path) or os.path.getsize(local_path) == 0:
+def ensure_file_exists(local_path, github_rel_path, min_size=500000):
+    """Auto-downloads model/labels from GitHub if missing or if Git LFS pointer (<500KB)."""
+    needs_download = False
+    if not os.path.exists(local_path):
+        needs_download = True
+    elif "labels.json" not in local_path and os.path.getsize(local_path) < min_size:
+        print(f"[WARN] {local_path} size is {os.path.getsize(local_path)} bytes (Git LFS pointer detected). Downloading full weights...")
+        needs_download = True
+    elif "labels.json" in local_path and os.path.getsize(local_path) == 0:
+        needs_download = True
+
+    if needs_download:
         url = f"{GITHUB_RAW_BASE}/{github_rel_path}"
-        print(f"[INFO] File not found locally: {local_path}. Downloading from GitHub: {url}...")
+        print(f"[INFO] Downloading from GitHub: {url}...")
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         try:
             urllib.request.urlretrieve(url, local_path)
@@ -56,7 +65,7 @@ DEFAULT_CLASSES = [
 ]
 
 # Ensure labels exist
-ensure_file_exists(LABELS_PATH, "asl_output/labels.json")
+ensure_file_exists(LABELS_PATH, "asl_output/labels.json", min_size=100)
 
 # Load labels
 CLASS_NAMES = DEFAULT_CLASSES
@@ -68,13 +77,14 @@ if os.path.exists(LABELS_PATH):
     except Exception as e:
         print(f"[WARN] Error reading labels.json: {e}")
 
-# Global model cache
+# Global model cache and diagnostics
 models_cache = {}
+models_errors = {}
 active_model_name = "fine_tuned"
 
 def load_models():
     """Pre-load Keras models into memory for zero cold-start latency."""
-    global models_cache
+    global models_cache, models_errors
     import tensorflow as tf
     # Suppress verbose TF logging & optimize memory
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
@@ -83,31 +93,32 @@ def load_models():
     print("[INFO] Loading Deep Learning Models...")
     
     # 1. Primary Model: Fine-Tuned MobileNetV2 (asl_model.keras)
-    ensure_file_exists(FINE_TUNED_MODEL_PATH, "asl_output/asl_model.keras")
+    ensure_file_exists(FINE_TUNED_MODEL_PATH, "asl_output/asl_model.keras", min_size=1000000)
     if os.path.exists(FINE_TUNED_MODEL_PATH):
         try:
-            print(f"[INFO] Loading Fine-Tuned Model: {FINE_TUNED_MODEL_PATH}")
-            model = tf.keras.models.load_model(FINE_TUNED_MODEL_PATH)
-            # Warm up graph execution
+            print(f"[INFO] Loading Fine-Tuned Model: {FINE_TUNED_MODEL_PATH} ({os.path.getsize(FINE_TUNED_MODEL_PATH)} bytes)")
+            model = tf.keras.models.load_model(FINE_TUNED_MODEL_PATH, compile=False)
             dummy = np.zeros((1, 160, 160, 3), dtype=np.float32)
             model.predict(dummy, verbose=0)
             models_cache["fine_tuned"] = model
             print("[SUCCESS] Fine-Tuned Model loaded and warmed up!")
         except Exception as e:
             print(f"[ERROR] Failed to load fine-tuned model: {e}")
+            models_errors["fine_tuned"] = str(e)
 
     # 2. Custom CNN Model (custom_asl_model.keras)
-    ensure_file_exists(CUSTOM_MODEL_PATH, "custom_asl_artifacts/custom_asl_model.keras")
+    ensure_file_exists(CUSTOM_MODEL_PATH, "custom_asl_artifacts/custom_asl_model.keras", min_size=1000000)
     if os.path.exists(CUSTOM_MODEL_PATH):
         try:
-            print(f"[INFO] Loading Custom CNN Model: {CUSTOM_MODEL_PATH}")
-            custom_model = tf.keras.models.load_model(CUSTOM_MODEL_PATH)
+            print(f"[INFO] Loading Custom CNN Model: {CUSTOM_MODEL_PATH} ({os.path.getsize(CUSTOM_MODEL_PATH)} bytes)")
+            custom_model = tf.keras.models.load_model(CUSTOM_MODEL_PATH, compile=False)
             dummy = np.zeros((1, 160, 160, 3), dtype=np.float32)
             custom_model.predict(dummy, verbose=0)
             models_cache["custom_cnn"] = custom_model
             print("[SUCCESS] Custom CNN Model loaded and warmed up!")
         except Exception as e:
             print(f"[WARN] Failed to load custom CNN model: {e}")
+            models_errors["custom_cnn"] = str(e)
 
 # Start background model loading thread immediately on server launch
 threading.Thread(target=load_models, daemon=True).start()
@@ -130,7 +141,8 @@ def index():
             "health": "GET /api/health",
             "models": "GET /api/models"
         },
-        "loaded_models": list(models_cache.keys())
+        "loaded_models": list(models_cache.keys()),
+        "models_errors": models_errors
     })
 
 @app.route("/<path:filename>")
@@ -142,9 +154,10 @@ def serve_static(filename):
 def health_check():
     """Automated crawler health check endpoint."""
     return jsonify({
-        "status": "healthy",
+        "status": "healthy" if models_cache else "initializing",
         "service": "ASL Alphabet Recognition API",
         "loaded_models": list(models_cache.keys()),
+        "models_errors": models_errors,
         "classes_count": len(CLASS_NAMES),
         "primary_model": "MobileNetV2 Fine-Tuned (asl_output/asl_model.keras)",
         "custom_model": "Custom Deep CNN (custom_asl_artifacts/custom_asl_model.keras)"
