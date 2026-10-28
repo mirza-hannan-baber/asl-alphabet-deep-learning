@@ -150,13 +150,20 @@ def preprocess_image(img_data_str):
     tensor = np.expand_dims(arr, axis=0) # Shape: (1, 160, 160, 3)
     return tensor
 
-@app.route("/api/predict", methods=["POST"])
+@app.route("/api/predict", methods=["POST", "OPTIONS"])
 def predict():
     """
     Main Real-Time Prediction API Endpoint.
     Accepts: JSON { "image": "data:image/jpeg;base64,...", "model": "fine_tuned" | "custom_cnn" }
     Returns: JSON { "top_prediction", "confidence", "top5", "latency_ms", "model_used" }
     """
+    if request.method == "OPTIONS":
+        res = jsonify({"status": "ok"})
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,Bypass-Tunnel-Reminder"
+        res.headers["Access-Control-Allow-Methods"] = "POST,OPTIONS"
+        return res, 200
+
     start_time = time.time()
     try:
         payload = request.get_json(force=True, silent=True)
