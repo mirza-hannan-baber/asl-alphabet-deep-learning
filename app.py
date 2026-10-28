@@ -20,6 +20,8 @@ import numpy as np
 from PIL import Image
 from flask import Flask, request, jsonify, send_from_directory
 
+import urllib.request
+
 # Base paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEB_APP_DIR = os.path.join(BASE_DIR, "web_app")
@@ -31,12 +33,30 @@ FINE_TUNED_MODEL_PATH = os.path.join(ASL_OUTPUT_DIR, "asl_model.keras")
 CUSTOM_MODEL_PATH = os.path.join(CUSTOM_DIR, "custom_asl_model.keras")
 LABELS_PATH = os.path.join(ASL_OUTPUT_DIR, "labels.json")
 
+# GitHub raw base URL for automatic on-demand model download if missing
+GITHUB_RAW_BASE = "https://raw.githubusercontent.com/mirza-hannan-baber/asl-alphabet-deep-learning/main"
+
+def ensure_file_exists(local_path, github_rel_path):
+    """Auto-downloads model/labels from GitHub if missing in cloud deployment."""
+    if not os.path.exists(local_path) or os.path.getsize(local_path) == 0:
+        url = f"{GITHUB_RAW_BASE}/{github_rel_path}"
+        print(f"[INFO] File not found locally: {local_path}. Downloading from GitHub: {url}...")
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        try:
+            urllib.request.urlretrieve(url, local_path)
+            print(f"[SUCCESS] Downloaded {local_path} ({os.path.getsize(local_path)} bytes)!")
+        except Exception as e:
+            print(f"[ERROR] Failed downloading {url}: {e}")
+
 # Standard 29 ASL Alphabet Classes
 DEFAULT_CLASSES = [
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
     "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
     "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"
 ]
+
+# Ensure labels exist
+ensure_file_exists(LABELS_PATH, "asl_output/labels.json")
 
 # Load labels
 CLASS_NAMES = DEFAULT_CLASSES
@@ -56,12 +76,14 @@ def load_models():
     """Pre-load Keras models into memory for zero cold-start latency."""
     global models_cache
     import tensorflow as tf
-    # Suppress verbose TF logging
+    # Suppress verbose TF logging & optimize memory
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+    os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
     print("[INFO] Loading Deep Learning Models...")
     
     # 1. Primary Model: Fine-Tuned MobileNetV2 (asl_model.keras)
+    ensure_file_exists(FINE_TUNED_MODEL_PATH, "asl_output/asl_model.keras")
     if os.path.exists(FINE_TUNED_MODEL_PATH):
         try:
             print(f"[INFO] Loading Fine-Tuned Model: {FINE_TUNED_MODEL_PATH}")
@@ -75,6 +97,7 @@ def load_models():
             print(f"[ERROR] Failed to load fine-tuned model: {e}")
 
     # 2. Custom CNN Model (custom_asl_model.keras)
+    ensure_file_exists(CUSTOM_MODEL_PATH, "custom_asl_artifacts/custom_asl_model.keras")
     if os.path.exists(CUSTOM_MODEL_PATH):
         try:
             print(f"[INFO] Loading Custom CNN Model: {CUSTOM_MODEL_PATH}")
@@ -86,13 +109,29 @@ def load_models():
         except Exception as e:
             print(f"[WARN] Failed to load custom CNN model: {e}")
 
+# Start background model loading thread immediately on server launch
+threading.Thread(target=load_models, daemon=True).start()
+
 # Initialize Flask App
 app = Flask(__name__, static_folder=WEB_APP_DIR, static_url_path="")
 
 @app.route("/")
 def index():
-    """Serve main web interface."""
-    return send_from_directory(WEB_APP_DIR, "index.html")
+    """Serve main web interface or JSON API status."""
+    if os.path.exists(os.path.join(WEB_APP_DIR, "index.html")):
+        return send_from_directory(WEB_APP_DIR, "index.html")
+    return jsonify({
+        "status": "online",
+        "service": "ASL Alphabet Deep Learning Inference API",
+        "author": "Mirza Muhammad Hannan Baber (SU92-BSCSM-F23-615)",
+        "supervisor": "Prof. Dr Munir Ahmed",
+        "endpoints": {
+            "predict": "POST /api/predict",
+            "health": "GET /api/health",
+            "models": "GET /api/models"
+        },
+        "loaded_models": list(models_cache.keys())
+    })
 
 @app.route("/<path:filename>")
 def serve_static(filename):
@@ -252,12 +291,9 @@ if __name__ == "__main__":
     print(f"[STARTING] Python Server on http://0.0.0.0:{PORT} (Local: http://127.0.0.1:{PORT})")
     print("=" * 70)
 
-    # 1. Start model loading in background thread (non-blocking)
-    threading.Thread(target=load_models, daemon=True).start()
-
-    # 2. Launch browser thread only in local development
+    # 1. Launch browser thread only in local development
     if "RENDER" not in os.environ and "PORT" not in os.environ:
         threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
 
-    # 3. Run Flask server on all interfaces so localhost, LAN, and cloud containers connect
+    # 2. Run Flask server on all interfaces
     app.run(host="0.0.0.0", port=PORT, debug=False)
