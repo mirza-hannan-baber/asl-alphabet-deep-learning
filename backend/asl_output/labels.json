@@ -1,0 +1,39 @@
+{
+  "class_names": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "del",
+    "nothing",
+    "space"
+  ],
+  "img_size": [
+    160,
+    160
+  ],
+  "input": "RGB float32 pixels in range 0-255 (rescaling model ke andar hai)",
+  "output": "softmax probabilities, order = class_names"
+}

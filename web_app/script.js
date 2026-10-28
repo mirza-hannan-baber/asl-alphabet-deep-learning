@@ -381,13 +381,11 @@ async function predictCurrentImage(expectedSign = null) {
   const modelSelect = document.getElementById("model-select");
   const selectedModel = modelSelect ? modelSelect.value : "fine_tuned";
 
-  // Determine API URL:
-  // - If running on localhost:5000 -> uses direct relative /api/predict
-  // - If running on Vercel -> connects to live cloud tunnel (https://asl-mirza-model.loca.lt/api/predict)
-  let apiUrl = "/api/predict";
-  if (window.location.hostname.includes("vercel.app") || window.location.protocol === "file:") {
-    apiUrl = "https://asl-mirza-model.loca.lt/api/predict";
-  }
+  // Dynamic Cloud Backend URL resolution:
+  // 1. User manual override (saved via Settings modal in localStorage)
+  // 2. config.js apiUrl setting
+  // 3. Localhost relative fallback (/api/predict)
+  const apiUrl = getBackendPredictUrl();
 
   try {
     // Attempt real live neural network inference on Python server
@@ -704,3 +702,147 @@ function copyLinkedInPost() {
     }, 2500);
   });
 }
+
+// ==============================================================================
+// Cloud Backend Connection Manager (Hugging Face / Railway / Localhost)
+// ==============================================================================
+
+function getBackendBaseUrl() {
+  const saved = localStorage.getItem("asl_backend_url");
+  if (saved && saved.trim()) return saved.trim().replace(/\/+$/, "");
+  if (window.BACKEND_CONFIG && window.BACKEND_CONFIG.apiUrl && window.BACKEND_CONFIG.apiUrl.trim()) {
+    return window.BACKEND_CONFIG.apiUrl.trim().replace(/\/+$/, "");
+  }
+  if (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
+    return window.location.origin;
+  }
+  return "";
+}
+
+function getBackendPredictUrl() {
+  const base = getBackendBaseUrl();
+  return base ? `${base}/api/predict` : "/api/predict";
+}
+
+async function checkBackendHealth() {
+  const dot = document.getElementById("backend-status-dot");
+  const label = document.getElementById("backend-url-label");
+  const modeCode = document.getElementById("backend-status-mode");
+  const baseUrl = getBackendBaseUrl();
+
+  if (!baseUrl && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
+    if (dot) {
+      dot.style.background = "#f59e0b";
+      dot.style.boxShadow = "0 0 10px #f59e0b";
+    }
+    if (label) label.textContent = "Cloud Backend Not Configured (Click '⚙️ Connect' to link HuggingFace/Railway)";
+    if (modeCode) modeCode.textContent = "Client / Benchmark Mode";
+    return;
+  }
+
+  const healthUrl = (baseUrl ? baseUrl : "") + "/api/health";
+  if (label) label.textContent = `Connecting to ${baseUrl || "Localhost"}...`;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(healthUrl, { signal: controller.signal, headers: { "Bypass-Tunnel-Reminder": "true" } });
+    clearTimeout(timer);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (dot) {
+        dot.style.background = "#10b981";
+        dot.style.boxShadow = "0 0 10px #10b981";
+      }
+      if (label) label.textContent = `🟢 Connected: ${baseUrl || window.location.origin}`;
+      if (modeCode) modeCode.textContent = "Live Neural Backend (Active)";
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    if (dot) {
+      dot.style.background = "#ef4444";
+      dot.style.boxShadow = "0 0 10px #ef4444";
+    }
+    if (label) label.textContent = `🔴 Offline (${baseUrl || "localhost:5000"}) - Click ⚙️ to change`;
+    if (modeCode) modeCode.textContent = "Backend Offline (Click ⚙️ to Connect)";
+  }
+}
+
+// Initialize Backend Modal and Event Listeners
+function initBackendManager() {
+  const modal = document.getElementById("backend-modal");
+  const btnEdit = document.getElementById("btn-edit-backend");
+  const btnCancel = document.getElementById("btn-cancel-backend");
+  const btnTest = document.getElementById("btn-test-backend");
+  const btnSave = document.getElementById("btn-save-backend");
+  const inputUrl = document.getElementById("input-backend-url");
+  const statusEl = document.getElementById("backend-test-status");
+
+  if (!modal) return;
+
+  if (btnEdit) {
+    btnEdit.addEventListener("click", () => {
+      inputUrl.value = localStorage.getItem("asl_backend_url") || (window.BACKEND_CONFIG ? window.BACKEND_CONFIG.apiUrl : "") || "";
+      statusEl.innerHTML = "";
+      modal.style.display = "flex";
+    });
+  }
+
+  if (btnCancel) {
+    btnCancel.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+  }
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  if (btnTest) {
+    btnTest.addEventListener("click", async () => {
+      const testUrl = (inputUrl.value || "").trim().replace(/\/+$/, "");
+      if (!testUrl) {
+        statusEl.innerHTML = `<span style="color: #ef4444;">⚠️ Please enter a valid URL.</span>`;
+        return;
+      }
+      statusEl.innerHTML = `<span style="color: #38bdf8;">⏳ Testing connection to ${testUrl}/api/health...</span>`;
+      try {
+        const res = await fetch(`${testUrl}/api/health`, { headers: { "Bypass-Tunnel-Reminder": "true" } });
+        if (res.ok) {
+          const data = await res.json();
+          statusEl.innerHTML = `<span style="color: #10b981;">✅ Connected! Server: ${data.service || "ASL Backend"} (${data.loaded_models ? data.loaded_models.length : 2} models active)</span>`;
+        } else {
+          statusEl.innerHTML = `<span style="color: #ef4444;">❌ Server returned HTTP ${res.status}. Check URL or CORS.</span>`;
+        }
+      } catch (err) {
+        statusEl.innerHTML = `<span style="color: #ef4444;">❌ Connection failed: ${err.message}. Ensure backend is running with CORS enabled.</span>`;
+      }
+    });
+  }
+
+  if (btnSave) {
+    btnSave.addEventListener("click", () => {
+      const newUrl = (inputUrl.value || "").trim().replace(/\/+$/, "");
+      if (newUrl) {
+        localStorage.setItem("asl_backend_url", newUrl);
+      } else {
+        localStorage.removeItem("asl_backend_url");
+      }
+      modal.style.display = "none";
+      checkBackendHealth();
+    });
+  }
+
+  // Initial check on page load
+  checkBackendHealth();
+}
+
+// Initialize on DOM load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initBackendManager);
+} else {
+  initBackendManager();
+}
+

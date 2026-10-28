@@ -1,0 +1,24 @@
+ASL Custom CNN Layer-by-Layer Weights Summary (model.get_weights())
+================================================================================
+
+Layer: conv1_1                   | Weights Shape: (3, 3, 3, 32)        | Biases: (32,)           | Params: 896
+Layer: bn1_1                     | Weights Shape: (32,)                | Biases: (32,)           | Params: 128
+Layer: conv1_2                   | Weights Shape: (3, 3, 32, 32)       | Biases: (32,)           | Params: 9,248
+Layer: bn1_2                     | Weights Shape: (32,)                | Biases: (32,)           | Params: 128
+Layer: conv2_1                   | Weights Shape: (3, 3, 32, 64)       | Biases: (64,)           | Params: 18,496
+Layer: bn2_1                     | Weights Shape: (64,)                | Biases: (64,)           | Params: 256
+Layer: conv2_2                   | Weights Shape: (3, 3, 64, 64)       | Biases: (64,)           | Params: 36,928
+Layer: bn2_2                     | Weights Shape: (64,)                | Biases: (64,)           | Params: 256
+Layer: conv3_1                   | Weights Shape: (3, 3, 64, 128)      | Biases: (128,)          | Params: 73,856
+Layer: bn3_1                     | Weights Shape: (128,)               | Biases: (128,)          | Params: 512
+Layer: conv3_2                   | Weights Shape: (3, 3, 128, 128)     | Biases: (128,)          | Params: 147,584
+Layer: bn3_2                     | Weights Shape: (128,)               | Biases: (128,)          | Params: 512
+Layer: conv4_1                   | Weights Shape: (3, 3, 128, 256)     | Biases: (256,)          | Params: 295,168
+Layer: bn4_1                     | Weights Shape: (256,)               | Biases: (256,)          | Params: 1,024
+Layer: conv4_2                   | Weights Shape: (3, 3, 256, 256)     | Biases: (256,)          | Params: 590,080
+Layer: bn4_2                     | Weights Shape: (256,)               | Biases: (256,)          | Params: 1,024
+Layer: dense_512_relu            | Weights Shape: (256, 512)           | Biases: (512,)          | Params: 131,584
+Layer: bn_dense1                 | Weights Shape: (512,)               | Biases: (512,)          | Params: 2,048
+Layer: dense_256_relu            | Weights Shape: (512, 256)           | Biases: (256,)          | Params: 131,328
+Layer: bn_dense2                 | Weights Shape: (256,)               | Biases: (256,)          | Params: 1,024
+Layer: asl_predictions_softmax   | Weights Shape: (256, 29)            | Biases: (29,)           | Params: 7,453
