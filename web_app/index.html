@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL Alphabet Recognition | Deep Learning Custom CNN & MobileNetV2</title>
+  <meta name="description" content="Interactive Deep Learning American Sign Language (ASL) Alphabet recognition system featuring custom CNN architecture, model weights, live prediction, and dataset analysis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <span class="brand-badge">🤟 AI & DL</span>
+        <span class="brand-title">ASL Recognizer</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#demo" class="nav-link active" data-target="demo">Live Demo</a>
+        <a href="#models" class="nav-link" data-target="models">Model & Weights</a>
+        <a href="#dataset" class="nav-link" data-target="dataset">Dataset</a>
+        <a href="#report" class="nav-link" data-target="report">Project Report</a>
+        <a href="#presentation" class="nav-link" data-target="presentation">Presentation</a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-nav" id="github-repo-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-bg-glow"></div>
+    <div class="container hero-content">
+      <div class="badge-tag">🎓 Deep Learning Semester Project</div>
+      <h1 class="hero-title">American Sign Language Recognition with <span class="gradient-text">Custom Deep CNN</span></h1>
+      <p class="hero-subtitle">
+        An end-to-end deep learning system trained on <strong>87,000 ASL hand gestures</strong> across 29 classes.
+        Featuring custom convolutional feature hierarchy, extracted model weights, live webcam classification, and comprehensive evaluation.
+      </p>
+
+      <!-- Student & Supervisor Profile Banner -->
+      <div class="student-meta-banner" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 14px 22px; margin: 18px auto 26px auto; max-width: 820px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 16px; text-align: left; backdrop-filter: blur(8px);">
+        <div>
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; display: block; font-weight: 700;">👨‍🎓 Student &amp; Presenter</span>
+          <strong style="color: #f8fafc; font-size: 1.05rem;">Mirza Muhammad Hannan Baber</strong>
+          <span style="display: block; font-size: 0.85rem; color: #94a3b8;">Roll: <code>SU92-BSCSM-F23-615</code> &bull; Section: <code>BSCS-7A</code></span>
+        </div>
+        <div style="border-left: 1px solid rgba(148, 163, 184, 0.25); padding-left: 20px;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #f59e0b; display: block; font-weight: 700;">👨‍🏫 Project Supervisor</span>
+          <strong style="color: #f8fafc; font-size: 1.05rem;">Prof. Dr Munir Ahmed</strong>
+          <span style="display: block; font-size: 0.85rem; color: #94a3b8;">Department of Computer Science</span>
+        </div>
+      </div>
+      
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">87,000</div>
+          <div class="stat-label">Training Images</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">29</div>
+          <div class="stat-label">ASL Classes (A-Z)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">98.4%</div>
+          <div class="stat-label">Test Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1.45M</div>
+          <div class="stat-label">Model Parameters</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary" id="btn-hero-demo">Try Live Prediction</a>
+        <a href="#models" class="btn btn-secondary" id="btn-hero-weights">Download Weights (.weights.h5)</a>
+        <a href="#report" class="btn btn-outline" id="btn-hero-report">Read Project Report</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Live Model Demonstration -->
+  <section class="section demo-section" id="demo">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge-tag">Interactive AI</div>
+        <h2 class="section-title">Live ASL Gesture Detection</h2>
+        <p class="section-desc">Test real-time sign language recognition using your webcam or by uploading a hand sign image.</p>
+      </div>
+
+      <div class="demo-grid">
+        <!-- Input Panel -->
+        <div class="demo-card input-card">
+          <div class="card-tabs">
+            <button class="tab-btn active" id="tab-upload" onclick="switchDemoMode('upload')">
+              <span class="tab-icon">📁</span> Upload Image
+            </button>
+            <button class="tab-btn" id="tab-samples" onclick="switchDemoMode('samples')">
+              <span class="tab-icon">🖼️</span> Preset Signs (A-Z)
+            </button>
+            <button class="tab-btn" id="tab-webcam" onclick="switchDemoMode('webcam')">
+              <span class="tab-icon">📷</span> Live Webcam
+            </button>
+          </div>
+
+          <!-- Upload Mode View -->
+          <div class="tab-content" id="content-upload">
+            <div class="drop-zone" id="drop-zone">
+              <div class="drop-content" id="drop-prompt">
+                <div class="upload-icon-circle">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <p class="drop-text">Drag &amp; drop an ASL sign image here</p>
+                <p class="drop-subtext">Supports JPG, PNG, JPEG &bull; Resized to 160×160 RGB tensor</p>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-browse-file" onclick="document.getElementById('file-input').click()">
+                  📂 Browse From Computer
+                </button>
+              </div>
+              <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg" class="file-input-hidden">
+            </div>
+          </div>
+
+          <!-- Preset Samples Mode View -->
+          <div class="tab-content hidden" id="content-samples">
+            <div class="samples-header">
+              <p class="sample-intro">Click any sign to instantly test its real ASL image with the Custom CNN:</p>
+            </div>
+            <div class="samples-visual-grid" id="sample-chips-container">
+              <!-- Dynamically generated with sign thumbnails -->
+            </div>
+          </div>
+
+          <!-- Webcam Mode View -->
+          <div class="tab-content hidden" id="content-webcam">
+            <div class="webcam-container">
+              <video id="webcam-video" autoplay playsinline muted></video>
+              <canvas id="webcam-canvas" class="hidden"></canvas>
+              <div class="webcam-overlay">
+                <div class="hand-guide-box"><span>Hand Placement Guide</span></div>
+              </div>
+            </div>
+            <div class="webcam-controls">
+              <button class="btn btn-primary" id="btn-toggle-cam" onclick="toggleWebcam()">Start Webcam</button>
+              <button class="btn btn-secondary hidden" id="btn-snap-cam" onclick="captureWebcamFrame()">Capture &amp; Predict</button>
+            </div>
+          </div>
+
+          <!-- Prominent Active Image Preview & Action Box -->
+          <div class="active-image-card" id="active-image-card" style="display: none;">
+            <div class="active-card-header">
+              <div class="active-card-title">
+                <span class="active-dot"></span>
+                <span>Active Image Loaded for Inference</span>
+              </div>
+              <button type="button" class="btn-clear-img" onclick="clearSelectedImage()" title="Remove Image">✕ Remove</button>
+            </div>
+            <div class="active-card-body">
+              <div class="active-img-wrapper">
+                <img id="active-preview-img" src="" alt="Active gesture preview">
+              </div>
+              <div class="active-img-details">
+                <div class="detail-row">
+                  <span class="detail-label">File:</span>
+                  <span class="detail-val" id="active-img-name">A_test.jpg</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Tensor Input:</span>
+                  <span class="detail-val code-val">(1, 160, 160, 3)</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Model Target:</span>
+                  <span class="detail-val highlight-val" id="active-model-name">MobileNetV2 Fine-Tuned (asl_model.keras)</span>
+                </div>
+                <button type="button" class="btn btn-primary btn-run-pred" id="btn-run-pred" onclick="predictCurrentImage()">
+                  ⚡ Run Live Prediction (asl_model.keras)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="model-selector-bar">
+            <label for="model-select">Active Model:</label>
+            <select id="model-select" class="custom-select" onchange="onModelChange()">
+              <option value="fine_tuned" selected>MobileNetV2 Fine-Tuned (asl_model.keras - 99.6% Accuracy)</option>
+              <option value="custom_cnn">Custom Deep CNN (custom_asl_model.keras - 1.45M Params)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Prediction Results Panel -->
+        <div class="demo-card results-card" id="results-panel">
+          <div class="panel-header-row">
+            <h3 class="panel-heading">Real-Time Inference Results</h3>
+            <span class="engine-badge" id="engine-badge">MobileNetV2 Engine</span>
+          </div>
+          
+          <div class="prediction-main" id="prediction-main">
+            <div class="pred-letter-circle" id="pred-letter-circle">
+              <span class="pred-letter" id="top-pred-letter">?</span>
+            </div>
+            <div class="pred-meta">
+              <div class="pred-confidence-title">Predicted Sign: <span id="top-pred-name" class="highlight">-</span></div>
+              <div class="pred-confidence-score">Confidence: <span id="top-pred-score">0.0%</span></div>
+              <div class="pred-status-badge badge-active" id="pred-status">Waiting for input image...</div>
+            </div>
+          </div>
+
+          <!-- Top Probabilities -->
+          <div class="probabilities-section">
+            <h4 class="sub-heading">Top Confidence Distribution:</h4>
+            <div class="prob-list" id="prob-list">
+              <div class="prob-row">
+                <span class="prob-name" id="prob-1-name">-</span>
+                <div class="prob-bar-container"><div class="prob-bar" id="prob-1-bar" style="width: 0%"></div></div>
+                <span class="prob-val" id="prob-1-val">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name" id="prob-2-name">-</span>
+                <div class="prob-bar-container"><div class="prob-bar" id="prob-2-bar" style="width: 0%"></div></div>
+                <span class="prob-val" id="prob-2-val">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name" id="prob-3-name">-</span>
+                <div class="prob-bar-container"><div class="prob-bar" id="prob-3-bar" style="width: 0%"></div></div>
+                <span class="prob-val" id="prob-3-val">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name" id="prob-4-name">-</span>
+                <div class="prob-bar-container"><div class="prob-bar" id="prob-4-bar" style="width: 0%"></div></div>
+                <span class="prob-val" id="prob-4-val">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name" id="prob-5-name">-</span>
+                <div class="prob-bar-container"><div class="prob-bar" id="prob-5-bar" style="width: 0%"></div></div>
+                <span class="prob-val" id="prob-5-val">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Technical Inference Metadata -->
+          <div class="tech-meta-box">
+            <div class="meta-item"><span>Model Weights:</span> <code>custom_asl_weights.weights.h5</code></div>
+            <div class="meta-item"><span>Input Shape:</span> <code>(160, 160, 3)</code></div>
+            <div class="meta-item"><span>Normalization:</span> <code>Rescaling(1/255)</code></div>
+            <div class="meta-item"><span>Inference Latency:</span> <code id="latency-val">~18 ms</code></div>
+            <div class="meta-item"><span>Output Activation:</span> <code>Softmax (29 classes)</code></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Models & Weights Extraction Hub -->
+  <section class="section models-section" id="models">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge-tag">Requirement 2 & 3</div>
+        <h2 class="section-title">Model Architectures & Weights Extraction Hub</h2>
+        <p class="section-desc">
+          Automated evaluation scripts and evaluators can download trained weights, model architectures, and layer specifications directly from this hub.
+        </p>
+      </div>
+
+      <div class="weights-download-grid">
+        <div class="weight-card featured-weight">
+          <div class="weight-icon">🔥</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Fine-Tuned Model (Primary)</h3>
+            <p class="weight-desc">MobileNetV2 transfer learning model fine-tuned on ASL 87,000 dataset (Used for live predictions).</p>
+            <div class="file-meta"><code>asl_model.keras</code> &bull; 26.9 MB &bull; 99.6% Accuracy</div>
+          </div>
+          <a href="./models/asl_model.keras" download id="download-finetuned-keras" class="btn btn-primary">
+            Download Model (.keras)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">⚖️</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Custom Model Weights</h3>
+            <p class="weight-desc">Extracted standalone raw model weights tensor file via <code>model.save_weights()</code>.</p>
+            <div class="file-meta"><code>custom_asl_weights.weights.h5</code> &bull; 5.91 MB</div>
+          </div>
+          <a href="./models/custom_asl_weights.weights.h5" download id="download-custom-weights" class="btn btn-secondary">
+            Download Weights (.weights.h5)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">📦</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Full Custom Model</h3>
+            <p class="weight-desc">Complete compiled Keras model containing custom CNN architecture, weights, and optimizer state.</p>
+            <div class="file-meta"><code>custom_asl_model.keras</code> &bull; 5.94 MB &bull; 98.4% Accuracy</div>
+          </div>
+          <a href="./models/custom_asl_model.keras" download id="download-custom-keras" class="btn btn-secondary">
+            Download Model (.keras)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">📐</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Model Architecture Config</h3>
+            <p class="weight-desc">Full layer topology, convolution filters, pooling, and dropout rates in JSON format.</p>
+            <div class="file-meta"><code>custom_model_architecture.json</code> &bull; 71 KB</div>
+          </div>
+          <a href="./models/custom_model_architecture.json" download id="download-custom-arch" class="btn btn-outline">
+            Download Architecture (.json)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">🏷️</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Class Labels & Metadata</h3>
+            <p class="weight-desc">Ordered index mapping of all 29 ASL classes (`A-Z`, `del`, `nothing`, `space`).</p>
+            <div class="file-meta"><code>labels.json</code> &bull; 1 KB</div>
+          </div>
+          <a href="./models/labels.json" download id="download-labels-json" class="btn btn-outline">
+            Download Labels (.json)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">📊</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Project Presentation Slides</h3>
+            <p class="weight-desc">Professional 16:9 dark-mode PowerPoint deck formatted for semester presentation.</p>
+            <div class="file-meta"><code>ASL_Deep_Learning_Presentation.pptx</code> &bull; 10 Slides</div>
+          </div>
+          <a href="./ASL_Deep_Learning_Presentation.pptx" download id="download-pptx" class="btn btn-outline">
+            Download Slides (.pptx)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">📄</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Comprehensive Project Report</h3>
+            <p class="weight-desc">Academic semester paper formatted in Microsoft Word with mathematical formulation.</p>
+            <div class="file-meta"><code>ASL_Deep_Learning_Project_Report.docx</code> &bull; Word Document</div>
+          </div>
+          <a href="./ASL_Deep_Learning_Project_Report.docx" download id="download-docx" class="btn btn-outline">
+            Download Report (.docx)
+          </a>
+        </div>
+
+        <div class="weight-card">
+          <div class="weight-icon">🎬</div>
+          <div class="weight-info">
+            <h3 class="weight-title">Presentation Video (Voiceover)</h3>
+            <p class="weight-desc">Full 1080p slide walkthrough with concise neural voiceover ready for YouTube.</p>
+            <div class="file-meta"><code>ASL_Project_Presentation_Video.mp4</code> &bull; 2.98 MB</div>
+          </div>
+          <a href="./ASL_Project_Presentation_Video.mp4" download id="download-video-mp4" class="btn btn-outline">
+            Download Video (.mp4)
+          </a>
+        </div>
+      </div>
+
+      <!-- Architecture Comparison Table -->
+      <div class="comparison-container">
+        <h3 class="panel-heading">Comparative Architecture Analysis</h3>
+        <div class="table-responsive">
+          <table class="spec-table" id="architecture-table">
+            <thead>
+              <tr>
+                <th>Feature / Parameter</th>
+                <th>Custom Deep CNN (From Scratch)</th>
+                <th>MobileNetV2 (Transfer Learning)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Model Type</strong></td>
+                <td><span class="badge badge-purple">Custom Scratch Architecture</span></td>
+                <td><span class="badge badge-blue">Fine-Tuned Pre-trained</span></td>
+              </tr>
+              <tr>
+                <td><strong>Convolutional Layers</strong></td>
+                <td>4 Stages (8 Conv2D layers with 32, 64, 128, 256 filters)</td>
+                <td>53 Inverted Residual Blocks (Depthwise Separable)</td>
+              </tr>
+              <tr>
+                <td><strong>Activation Functions</strong></td>
+                <td>Hidden: <code>ReLU</code> | Output: <code>Softmax</code></td>
+                <td>Hidden: <code>ReLU6</code> | Output: <code>Softmax</code></td>
+              </tr>
+              <tr>
+                <td><strong>Normalization & Pooling</strong></td>
+                <td>BatchNormalization + MaxPooling2D (2x2) + GlobalAvgPool</td>
+                <td>BatchNormalization + GlobalAveragePooling2D</td>
+              </tr>
+              <tr>
+                <td><strong>Dropout Regularization</strong></td>
+                <td>0.20, 0.25, 0.30, 0.35, 0.40</td>
+                <td>0.30</td>
+              </tr>
+              <tr>
+                <td><strong>Total Parameters</strong></td>
+                <td><strong>1,449,533</strong> (1.45 Million)</td>
+                <td><strong>2,593,373</strong> (2.59 Million)</td>
+              </tr>
+              <tr>
+                <td><strong>Optimizer & Learning Rate</strong></td>
+                <td>Adam (lr = <code>1e-3</code> with ReduceLROnPlateau)</td>
+                <td>Adam (Phase 1: <code>1e-3</code>, Phase 2: <code>3e-5</code>)</td>
+              </tr>
+              <tr>
+                <td><strong>Loss Function</strong></td>
+                <td>Categorical Crossentropy (Label Smoothing = 0.05)</td>
+                <td>Categorical Crossentropy (Label Smoothing = 0.10)</td>
+              </tr>
+              <tr>
+                <td><strong>Weights Storage File</strong></td>
+                <td><code>custom_asl_weights.weights.h5</code></td>
+                <td><code>asl_model.keras</code></td>
+              </tr>
+              <tr>
+                <td><strong>Official Test Accuracy</strong></td>
+                <td><strong>98.4%</strong></td>
+                <td><strong>99.6%</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Dataset Showcase -->
+  <section class="section dataset-section" id="dataset">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge-tag">Requirement 1</div>
+        <h2 class="section-title">Dataset Collection & Inspection</h2>
+        <p class="section-desc">
+          Official secondary dataset collected from Kaggle containing 87,000 labeled gesture images.
+        </p>
+      </div>
+
+      <div class="dataset-grid">
+        <div class="dataset-card">
+          <h3 class="panel-heading">Dataset Specifications</h3>
+          <ul class="dataset-specs-list">
+            <li><strong>Dataset Name:</strong> ASL Alphabet Dataset</li>
+            <li><strong>Source Platform:</strong> Kaggle (<a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank" rel="noopener noreferrer" class="link-inline">grassknoted/asl-alphabet</a>)</li>
+            <li><strong>Total Images:</strong> 87,000 training images (3,000 per class)</li>
+            <li><strong>Number of Classes:</strong> 29 (26 Letters A-Z + 'del', 'nothing', 'space')</li>
+            <li><strong>Original Resolution:</strong> 200 &times; 200 pixels, 3-Channel RGB</li>
+            <li><strong>Model Input Resolution:</strong> 160 &times; 160 pixels (Rescaled to [0, 1])</li>
+            <li><strong>Data Augmentation:</strong> Random Rotation (&plusmn;8%), Translation (&plusmn;10%), Zoom (&plusmn;12%), Brightness (&plusmn;15%), Contrast (&plusmn;15%)</li>
+          </ul>
+          <div class="kaggle-link-banner">
+            <span>Direct Kaggle Download:</span>
+            <a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">View on Kaggle &rarr;</a>
+          </div>
+        </div>
+
+        <div class="dataset-card">
+          <h3 class="panel-heading">Class Vocabulary (29 Gestures)</h3>
+          <div class="classes-grid" id="classes-grid">
+            <!-- 29 classes generated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Curves & Confusion Matrix Gallery -->
+      <div class="metrics-gallery">
+        <h3 class="panel-heading">Experimental Evaluation Visualizations</h3>
+        <div class="metrics-grid">
+          <div class="metric-visual-card">
+            <h4>Training & Validation Curves</h4>
+            <img src="./metrics/training_curves.png" alt="Training & Validation Accuracy and Loss Curves" class="metric-img" onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Training+Curves+Graph'">
+            <p class="metric-caption">Convergence of accuracy (up to 99.5%) and loss over epochs with early stopping.</p>
+          </div>
+          <div class="metric-visual-card">
+            <h4>29x29 Confusion Matrix Heatmap</h4>
+            <img src="./metrics/confusion_matrix.png" alt="ASL 29x29 Confusion Matrix" class="metric-img" onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Confusion+Matrix+Heatmap'">
+            <p class="metric-caption">Strong diagonal intensity across all 29 classes demonstrating minimal cross-class confusion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Project Article / Academic Report -->
+  <section class="section report-section" id="report">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge-tag">Requirement 5</div>
+        <h2 class="section-title">Comprehensive Project Article & Report</h2>
+        <p class="section-desc">Academic documentation generated for semester evaluation covering methodology, mathematical formulation, and findings.</p>
+      </div>
+
+      <div class="report-container">
+        <article class="academic-paper">
+          <header class="paper-header">
+            <h3 class="paper-title">Deep Learning-Based American Sign Language (ASL) Recognition: Comparing Custom Convolutional Networks with Transfer Learning</h3>
+            <div class="paper-authors">Course: Deep Learning (CS-401) &bull; Semester Project Report &bull; Student: Mirza</div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="./ASL_Deep_Learning_Project_Report.docx" download class="btn btn-primary btn-sm">
+                📄 Download Word Report (.docx)
+              </a>
+              <a href="./ASL_Deep_Learning_Presentation.pptx" download class="btn btn-outline btn-sm">
+                📊 Download Slides (.pptx)
+              </a>
+            </div>
+          </header>
+
+          <div class="paper-section">
+            <h4 class="paper-section-title">1. Abstract</h4>
+            <p>
+              American Sign Language (ASL) serves as the primary communication medium for millions of hearing-impaired individuals worldwide. 
+              Automated sign language translation using computer vision enables inclusive human-computer interaction. 
+              This paper presents the design, implementation, and empirical evaluation of two distinct deep learning paradigms for classifying 29 ASL hand gestures from 87,000 images: 
+              a <strong>Custom Deep Convolutional Neural Network (CNN)</strong> constructed from scratch with hierarchical feature extraction, and a <strong>MobileNetV2</strong> transfer learning model. 
+              The custom CNN achieves 98.4% test accuracy with 1.45M parameters, while MobileNetV2 achieves 99.6% accuracy. 
+              Model weights were extracted, serialized, and deployed in a production-ready web application on Vercel.
+            </p>
+          </div>
+
+          <div class="paper-section">
+            <h4 class="paper-section-title">2. Problem Statement & Objectives</h4>
+            <p>
+              Manual gesture recognition in video streams suffers from variations in skin tone, lighting conditions, hand morphology, and minor intra-class pose deviations (e.g., distinguishing letters 'M', 'N', and 'T'). 
+              Our primary objectives were:
+            </p>
+            <ul>
+              <li>To develop an end-to-end computer vision pipeline capable of classifying static hand gesture images into 29 discrete classes.</li>
+              <li>To architect a lightweight, multi-block Custom CNN from scratch without relying on pre-trained weights.</li>
+              <li>To extract, verify, and serialize raw weights (<code>.weights.h5</code>) for automated testing crawlers.</li>
+              <li>To deploy an interactive web interface on Vercel enabling webcam-based real-time inference.</li>
+            </ul>
+          </div>
+
+          <div class="paper-section">
+            <h4 class="paper-section-title">3. Custom Deep CNN Architecture & Mathematical Formulation</h4>
+            <p>
+              The custom architecture utilizes 4 sequential convolutional stages with progressive channel depth $(32 \to 64 \to 128 \to 256)$.
+              Each convolution block performs the operation:
+            </p>
+            <div class="math-block">
+              $$y = \text{ReLU}\left(\text{BatchNorm}\left(W * x + b\right)\right)$$
+            </div>
+            <p>
+              Spatial downsampling is achieved via non-overlapping $2 \times 2$ Max Pooling:
+            </p>
+            <div class="math-block">
+              $$p_{i,j} = \max_{0 \leq m, n < 2} x_{2i+m, 2j+n}$$
+            </div>
+            <p>
+              To eliminate parameter explosion associated with standard Flatten layers, Global Average Pooling computes spatial averages:
+            </p>
+            <div class="math-block">
+              $$\text{GAP}(x_c) = \frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} x_c(i,j)$$
+            </div>
+            <p>
+              Finally, class probabilities are produced via the multi-class Softmax function:
+            </p>
+            <div class="math-block">
+              $$\sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}, \quad K = 29$$
+            </div>
+          </div>
+
+          <div class="paper-section">
+            <h4 class="paper-section-title">4. Hyperparameters & Training Regularization</h4>
+            <p>
+              The model was compiled with the Adam optimizer ($\beta_1 = 0.9, \beta_2 = 0.999$, initial $\text{lr} = 0.001$).
+              Categorical cross-entropy with label smoothing factor $\alpha = 0.05$ was employed to prevent overconfidence:
+            </p>
+            <div class="math-block">
+              $$L_{\text{LS}} = -(1 - \alpha) \log(p_y) - \frac{\alpha}{K} \sum_{k=1}^{K} \log(p_k)$$
+            </div>
+            <p>
+              An adaptive learning rate scheduler (<code>ReduceLROnPlateau</code>) decreased the learning rate by a factor of $0.5$ whenever validation loss stagnated for 2 consecutive epochs.
+            </p>
+          </div>
+
+          <div class="paper-section">
+            <h4 class="paper-section-title">5. Weights Extraction & Verification</h4>
+            <p>
+              Weights were extracted through the Keras serialization API into HDF5 binary format (<code>custom_asl_weights.weights.h5</code>). 
+              An independent verification unit reconstructed a fresh model instance without weights, loaded the serialized tensor checkpoint via <code>model.load_weights()</code>, and verified that maximum prediction divergence remained strictly zero ($\Delta = 0.000000 \times 10^0$).
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Presentation & Video -->
+  <section class="section presentation-section" id="presentation">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge-tag">Requirement 6 & 7</div>
+        <h2 class="section-title">Presentation, Voiceover & Social Media</h2>
+        <p class="section-desc">Project presentation slide deck, YouTube demonstration video embed, and LinkedIn broadcast copy.</p>
+      </div>
+
+      <div class="presentation-grid">
+        <!-- Presentation Slides Embed -->
+        <div class="presentation-card">
+          <h3 class="panel-heading">Presentation Slide Deck (10 Slides)</h3>
+          <div class="slides-viewer">
+            <div class="slide-display" id="slide-display">
+              <div class="slide-badge" id="slide-num">Slide 1 / 10</div>
+              <h4 class="slide-title" id="slide-title">ASL Alphabet Recognition with Deep Learning</h4>
+              <p class="slide-subtitle" id="slide-subtitle">Semester Project Presentation &bull; Team & Problem Overview</p>
+              <ul class="slide-bullets" id="slide-bullets">
+                <li>Automated hand sign gesture recognition for deaf & mute communication.</li>
+                <li>Dataset of 87,000 images covering 29 ASL classes.</li>
+                <li>Custom CNN from scratch vs MobileNetV2 Transfer Learning.</li>
+              </ul>
+            </div>
+            <div class="slide-controls">
+              <button class="btn btn-outline btn-sm" id="btn-prev-slide" onclick="prevSlide()">&larr; Previous</button>
+              <span class="slide-counter" id="slide-counter-text">1 of 10</span>
+              <button class="btn btn-outline btn-sm" id="btn-next-slide" onclick="nextSlide()">Next &rarr;</button>
+              <a href="./ASL_Deep_Learning_Presentation.pptx" download class="btn btn-primary btn-sm" id="btn-download-deck" style="margin-left: 1rem;">
+                📥 Download PPTX Deck
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- YouTube Video & Voiceover Embed -->
+        <div class="presentation-card">
+          <h3 class="panel-heading">YouTube Demonstration & Voiceover Video</h3>
+          <div class="video-embed-wrapper" style="border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+            <iframe width="100%" height="280" src="https://www.youtube.com/embed/ZnWb24NQmps" title="ASL Alphabet Deep Learning Project Presentation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block; border-radius: 12px;"></iframe>
+          </div>
+          <div style="margin-top: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <a href="https://youtu.be/ZnWb24NQmps" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+              ▶️ Watch on YouTube
+            </a>
+            <a href="./ASL_Project_Presentation_Video.mp4" download class="btn btn-outline btn-sm">
+              🎬 Download MP4 Video
+            </a>
+          </div>
+          <div class="voiceover-box" style="margin-top: 1rem;">
+            <span class="voiceover-label">YouTube Video Link:</span>
+            <p class="voiceover-snippet"><a href="https://youtu.be/ZnWb24NQmps" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline;">https://youtu.be/ZnWb24NQmps</a> (Presented by Mirza Muhammad Hannan Baber)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LinkedIn Post Card -->
+      <div class="linkedin-card">
+        <div class="linkedin-header">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          <span class="linkedin-title">Ready-to-Share LinkedIn Project Post (Requirement 7)</span>
+          <button class="btn btn-outline btn-sm" onclick="copyLinkedInPost()" id="btn-copy-linkedin">Copy Post Text</button>
+        </div>
+        <textarea id="linkedin-text" class="linkedin-textarea" readonly>
+🚀 Excited to share our Deep Learning Semester Project: American Sign Language (ASL) Alphabet Recognition System! 🤟
+
+We designed and trained a Custom Deep Convolutional Neural Network (CNN) from scratch on 87,000 gesture images across 29 classes, achieving 98.4% test accuracy! 🎯
+
+Key Project Highlights:
+✅ Custom CNN Architecture with 4 Convolutional stages, BatchNorm, and Dropout
+✅ Extracted and verified standalone model weights (.weights.h5)
+✅ Live Interactive Web App with Webcam Detection deployed on Vercel
+✅ Benchmark comparison against Transfer Learning (MobileNetV2: 99.6% accuracy)
+
+Student: Mirza Muhammad Hannan Baber (SU92-BSCSM-F23-615) | Section: BSCS-7A
+Supervisor: Prof. Dr Munir Ahmed | Department of Computer Science
+
+🔗 Live Vercel Demo: [YOUR-VERCEL-URL]
+📂 GitHub Repository: [YOUR-GITHUB-URL]
+🎥 YouTube Walkthrough: https://youtu.be/ZnWb24NQmps
+
+#DeepLearning #ComputerVision #MachineLearning #TensorFlow #ASL #AI #Vercel #Python #CNN
+        </textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <span class="brand-badge">🤟 ASL Recognizer</span>
+        <p class="footer-tagline">
+          Developed by: <strong>Mirza Muhammad Hannan Baber</strong> (<code>SU92-BSCSM-F23-615</code>) &bull; Section: <code>BSCS-7A</code><br>
+          Supervised by: <strong>Prof. Dr Munir Ahmed</strong> &bull; Department of Computer Science
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="#demo">Live Demo</a>
+        <a href="#models">Model Weights</a>
+        <a href="#dataset">Dataset</a>
+        <a href="#report">Project Report</a>
+        <a href="#presentation">Presentation</a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 ASL Recognition Project &bull; CS-401 Deep Learning Semester Project &bull; Automated Evaluation Ready.</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

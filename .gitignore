@@ -1,0 +1,33 @@
+# ==============================================================================
+# .gitignore for ASL Alphabet Recognition Deep Learning Semester Project
+# ==============================================================================
+
+# 1. Raw Large Training Dataset (87,000 images >1GB - Downloadable via Kaggle)
+# KEEP asl_alphabet/asl_alphabet_test/ for automated testing crawlers!
+asl_alphabet/asl_alphabet_train/
+_DO_NOT_UPLOAD_TO_GITHUB/
+
+# 2. Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.Python
+
+# 3. Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# 4. Temporary Video Generation Scratch Files
+video_temp/
+test_audio.mp3
+*.tmp
+*.orig
+
+# 5. IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
