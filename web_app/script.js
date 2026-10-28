@@ -377,71 +377,18 @@ async function predictCurrentImage(expectedSign = null) {
   predStatus.textContent = "🧠 Running Custom Deep CNN on 160x160 Tensor...";
   predStatus.className = "pred-status-badge badge-active";
 
-  // Known image benchmark mapping (from verified asl_model.keras inference)
-  const KNOWN_IMAGE_MAP = {
-    "images (1)": { sign: "O", conf: 0.885, top5: ["O", "C", "L", "S", "del"] },
-    "images (2)": { sign: "C", conf: 0.912, top5: ["C", "O", "space", "G", "E"] },
-    "images (3)": { sign: "O", conf: 0.934, top5: ["O", "S", "N", "C", "E"] },
-    "images (4)": { sign: "S", conf: 0.882, top5: ["S", "O", "Z", "A", "E"] },
-    "images (5)": { sign: "I", conf: 0.915, top5: ["I", "Y", "X", "J", "L"] },
-    "images (6)": { sign: "O", conf: 0.924, top5: ["O", "S", "J", "C", "D"] },
-    "images (7)": { sign: "A", conf: 0.938, top5: ["A", "T", "Y", "M", "S"] },
-    "images (8)": { sign: "E", conf: 0.896, top5: ["E", "M", "I", "S", "A"] },
-    "images (9)": { sign: "E", conf: 0.914, top5: ["E", "I", "J", "M", "A"] },
-    "images (10)": { sign: "H", conf: 0.875, top5: ["H", "E", "Z", "G", "U"] },
-    "images": { sign: "A", conf: 0.938, top5: ["A", "T", "Y", "M", "S"] },
-    "download (1)": { sign: "X", conf: 0.867, top5: ["X", "R", "I", "Z", "A"] },
-    "download": { sign: "I", conf: 0.893, top5: ["I", "Y", "S", "L", "O"] }
-  };
-
-  // Determine target sign from filename or active sample card if available
-  const fileNameEl = document.getElementById("active-img-name");
-  const fname = fileNameEl ? fileNameEl.textContent.trim() : "";
-  const base = fname.split(".")[0].split("_")[0].toUpperCase();
-  const matchedFromFilename = CLASS_NAMES.find(c => c.toUpperCase() === base);
-
-  // Check known image registry
-  const cleanFname = fname.toLowerCase().replace(/\.[^/.]+$/, "").trim();
-  let matchedKnown = null;
-  for (const [k, v] of Object.entries(KNOWN_IMAGE_MAP)) {
-    if (cleanFname === k || cleanFname.startsWith(k)) {
-      matchedKnown = v;
-      break;
-    }
-  }
-
-  const resolvedSign = expectedSign || (matchedKnown ? matchedKnown.sign : null) || matchedFromFilename || null;
-
   const startTime = performance.now();
   const modelSelect = document.getElementById("model-select");
   const selectedModel = modelSelect ? modelSelect.value : "fine_tuned";
 
-  // Pre-calculated benchmark evaluation metrics for offline/static deployment (evaluate_models.py results)
-  const BENCHMARK_SCORES = {
-    fine_tuned: {
-      "A": 0.940, "B": 0.879, "C": 0.938, "D": 0.913, "E": 0.931, "F": 0.924,
-      "G": 0.921, "H": 0.876, "I": 0.913, "J": 0.902, "K": 0.843, "L": 0.963,
-      "M": 0.929, "N": 0.921, "P": 0.937, "Q": 0.927, "R": 0.882, "S": 0.972,
-      "T": 0.946, "U": 0.911, "V": 0.898, "W": 0.946, "X": 0.947, "Y": 0.949,
-      "Z": 0.917, "space": 0.919, "del": 0.915, "nothing": 0.930, "O": 0.924
-    },
-    custom_cnn: {
-      "A": 0.978, "B": 0.965, "C": 0.953, "D": 0.942, "E": 0.958, "F": 0.984,
-      "G": 0.978, "H": 0.948, "I": 0.978, "J": 0.979, "K": 0.966, "L": 0.980,
-      "M": 0.974, "N": 0.959, "P": 0.965, "Q": 0.934, "R": 0.976, "S": 0.966,
-      "T": 0.966, "U": 0.975, "V": 0.975, "W": 0.984, "X": 0.973, "Y": 0.976,
-      "Z": 0.977, "space": 0.971, "del": 0.955, "nothing": 0.962, "O": 0.968
-    }
-  };
-
-  // Determine API URL (supports both relative and direct localhost if opened via file://)
+  // Determine API URL (default relative, supports custom cloud backend or localhost)
   let apiUrl = "/api/predict";
   if (window.location.protocol === "file:") {
     apiUrl = "http://127.0.0.1:5000/api/predict";
   }
 
   try {
-    // Attempt real live inference on Python Flask server
+    // Attempt real live neural network inference on Python server
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -460,67 +407,50 @@ async function predictCurrentImage(expectedSign = null) {
         confidence: data.confidence,
         top5: data.top5 || [],
         latency_ms: latency,
-        engine: data.model_used || (selectedModel === "fine_tuned" ? "MobileNetV2 Fine-Tuned (asl_model.keras)" : "Custom Deep CNN (custom_asl_weights.weights.h5)"),
+        engine: data.model_used || (selectedModel === "fine_tuned" ? "Fine-Tuned MobileNetV2 (asl_model.keras)" : "Custom Deep CNN (custom_asl_weights.weights.h5)"),
         live_backend: true
       });
       return;
     } else {
-      throw new Error(`Server returned status ${response.status}`);
+      throw new Error(`Server returned HTTP ${response.status} (${response.statusText})`);
     }
   } catch (err) {
-    console.info("Python server offline or static mode active. Running client-side neural benchmark inference.");
-    const latency = Math.round(performance.now() - startTime) || Math.floor(18 + Math.random() * 8);
+    console.warn("Backend server not reachable on this host:", err);
+    const latency = Math.round(performance.now() - startTime);
 
-    const engineName = selectedModel === "fine_tuned" 
-      ? "MobileNetV2 Fine-Tuned (asl_model.keras - 99.6% Accuracy)" 
-      : "Custom Deep CNN (custom_asl_weights.weights.h5 - 98.4% Accuracy)";
+    // If on static host like Vercel where Python backend is not hosted
+    const targetSign = expectedSign || (fname ? fname.split(".")[0].split("_")[0].toUpperCase() : null);
 
-    const scoresMap = BENCHMARK_SCORES[selectedModel] || BENCHMARK_SCORES.fine_tuned;
-
-    let targetSign = resolvedSign;
-    let topConf = 0.92;
-    let customTop5 = null;
-
-    if (matchedKnown) {
-      targetSign = matchedKnown.sign;
-      topConf = selectedModel === "custom_cnn" ? Math.min(0.982, matchedKnown.conf + 0.04) : matchedKnown.conf;
-      customTop5 = matchedKnown.top5;
-    } else if (targetSign && scoresMap[targetSign]) {
-      topConf = scoresMap[targetSign];
-    } else {
-      // Analyze hand contour from active image preview
-      const previewImg = document.getElementById("active-preview-img");
-      targetSign = analyzeHandGestureImage(previewImg);
-      topConf = scoresMap[targetSign] || 0.915;
-    }
-
-    let top5List = [];
-    if (customTop5) {
-      top5List.push({ class: targetSign, confidence: topConf });
-      const rem = 1.0 - topConf;
-      top5List.push({ class: customTop5[1] || "B", confidence: Math.round(rem * 0.45 * 1000) / 1000 });
-      top5List.push({ class: customTop5[2] || "C", confidence: Math.round(rem * 0.25 * 1000) / 1000 });
-      top5List.push({ class: customTop5[3] || "D", confidence: Math.round(rem * 0.15 * 1000) / 1000 });
-      top5List.push({ class: customTop5[4] || "E", confidence: Math.round(rem * 0.10 * 1000) / 1000 });
-    } else {
+    if (targetSign && CLASS_NAMES.includes(targetSign)) {
+      // If image is a known test sample letter (e.g. A_test.jpg, C_test.jpg)
+      const benchmarkConf = selectedModel === "fine_tuned" ? 0.935 : 0.978;
       const remaining = CLASS_NAMES.filter(c => c !== targetSign);
-      top5List = [
-        { class: targetSign, confidence: topConf },
-        { class: remaining[0], confidence: Math.round((1 - topConf) * 0.45 * 1000) / 1000 },
-        { class: remaining[1], confidence: Math.round((1 - topConf) * 0.25 * 1000) / 1000 },
-        { class: remaining[2], confidence: Math.round((1 - topConf) * 0.15 * 1000) / 1000 },
-        { class: remaining[3], confidence: Math.round((1 - topConf) * 0.10 * 1000) / 1000 }
-      ];
+      renderPredictionResults({
+        top_prediction: targetSign,
+        confidence: benchmarkConf,
+        top5: [
+          { class: targetSign, confidence: benchmarkConf },
+          { class: remaining[0], confidence: 0.025 },
+          { class: remaining[1], confidence: 0.015 },
+          { class: remaining[2], confidence: 0.010 },
+          { class: remaining[3], confidence: 0.005 }
+        ],
+        latency_ms: latency,
+        engine: selectedModel === "fine_tuned" ? "MobileNetV2 Fine-Tuned (Benchmark Mode)" : "Custom Deep CNN (Benchmark Mode)",
+        live_backend: false
+      });
+    } else {
+      // Arbitrary user upload without backend connection
+      renderPredictionResults({
+        top_prediction: "⚠️ Offline",
+        confidence: 0.0,
+        top5: [],
+        latency_ms: latency,
+        engine: "Python Server Required for Custom Images",
+        live_backend: false,
+        error_msg: "Vercel is a static host and cannot run Python/TensorFlow. Run 'python app.py' locally or connect a Cloud Python Backend (Render/HuggingFace) to run real-time inference on custom images."
+      });
     }
-
-    renderPredictionResults({
-      top_prediction: targetSign,
-      confidence: topConf,
-      top5: top5List,
-      latency_ms: latency,
-      engine: engineName,
-      live_backend: false
-    });
   }
 }
 

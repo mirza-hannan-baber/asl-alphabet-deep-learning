@@ -239,7 +239,7 @@ def open_browser(port):
     webbrowser.open(f"http://127.0.0.1:{port}")
 
 if __name__ == "__main__":
-    PORT = 5000
+    PORT = int(os.environ.get("PORT", 5000))
     print("=" * 70)
     print("[ASL ALPHABET RECOGNITION] Deep Learning Inference Server")
     print(f"[STARTING] Python Server on http://0.0.0.0:{PORT} (Local: http://127.0.0.1:{PORT})")
@@ -248,8 +248,9 @@ if __name__ == "__main__":
     # 1. Start model loading in background thread (non-blocking)
     threading.Thread(target=load_models, daemon=True).start()
 
-    # 2. Launch browser thread
-    threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
+    # 2. Launch browser thread only in local development
+    if "RENDER" not in os.environ and "PORT" not in os.environ:
+        threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
 
-    # 3. Run Flask server on all interfaces so localhost and 192.168.x.x both connect
+    # 3. Run Flask server on all interfaces so localhost, LAN, and cloud containers connect
     app.run(host="0.0.0.0", port=PORT, debug=False)
