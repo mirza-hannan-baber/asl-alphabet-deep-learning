@@ -390,8 +390,8 @@ async function predictCurrentImage(expectedSign = null) {
     "images (9)": { sign: "E", conf: 0.914, top5: ["E", "I", "J", "M", "A"] },
     "images (10)": { sign: "H", conf: 0.875, top5: ["H", "E", "Z", "G", "U"] },
     "images": { sign: "A", conf: 0.938, top5: ["A", "T", "Y", "M", "S"] },
-    "download": { sign: "D", conf: 0.913, top5: ["D", "B", "U", "I", "L"] },
-    "download (1)": { sign: "D", conf: 0.913, top5: ["D", "B", "U", "I", "L"] }
+    "download (1)": { sign: "X", conf: 0.867, top5: ["X", "R", "I", "Z", "A"] },
+    "download": { sign: "I", conf: 0.893, top5: ["I", "Y", "S", "L", "O"] }
   };
 
   // Determine target sign from filename or active sample card if available
