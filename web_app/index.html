@@ -277,20 +277,24 @@
   <div id="backend-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
     <div style="background: #0f172a; border: 1px solid #38bdf8; border-radius: 14px; padding: 26px; max-width: 520px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
       <h3 style="margin-top: 0; color: #f8fafc; font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
-        ⚙️ Connect Cloud Python Backend
+        ⚙️ Cloud Python Backend Settings
       </h3>
       <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.5;">
-        Paste your deployed <strong>Hugging Face Space</strong> or <strong>Railway</strong> backend URL to run live deep learning predictions directly from Vercel:
+        Default Live Backend: <code style="color: #38bdf8;">https://asl-alphabet-deep-learning.onrender.com</code><br>
+        Agar aap koi custom backend (jaise localhost ya doosra server) connect karna chahein to yahan URL enter karein. Agar box khali hoga to default Render cloud backend hi chalega.
       </p>
       <div style="margin: 16px 0;">
-        <label style="display: block; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Backend Server URL:</label>
-        <input type="text" id="input-backend-url" placeholder="e.g. https://your-name-asl-backend.hf.space" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box;">
+        <label style="display: block; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Custom Backend Server URL (Optional):</label>
+        <input type="text" id="input-backend-url" placeholder="Default: https://asl-alphabet-deep-learning.onrender.com" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box;">
       </div>
       <div id="backend-test-status" style="margin-bottom: 14px; font-size: 0.82rem; min-height: 20px;"></div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button id="btn-cancel-backend" class="btn btn-secondary" style="padding: 8px 16px;">Cancel</button>
-        <button id="btn-test-backend" class="btn btn-secondary" style="padding: 8px 16px; border-color: #38bdf8; color: #38bdf8;">⚡ Test Connection</button>
-        <button id="btn-save-backend" class="btn btn-primary" style="padding: 8px 20px;">Save &amp; Connect</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <button id="btn-reset-backend" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.82rem; color: #94a3b8;">🔄 Reset to Default</button>
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-cancel-backend" class="btn btn-secondary" style="padding: 8px 16px;">Cancel</button>
+          <button id="btn-test-backend" class="btn btn-secondary" style="padding: 8px 16px; border-color: #38bdf8; color: #38bdf8;">⚡ Test Connection</button>
+          <button id="btn-save-backend" class="btn btn-primary" style="padding: 8px 20px;">Save &amp; Connect</button>
+        </div>
       </div>
     </div>
   </div>

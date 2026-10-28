@@ -382,16 +382,18 @@ async function predictCurrentImage(expectedSign = null) {
   const selectedModel = modelSelect ? modelSelect.value : "fine_tuned";
   const previewImg = document.getElementById("active-preview-img");
 
-  // Determine if a live Python backend is explicitly configured
-  const savedUrl = localStorage.getItem("asl_backend_url");
-  const isLocalHost = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-  const shouldTryBackend = Boolean(savedUrl) || isLocalHost;
-
-  // 1. Attempt Real Live Neural Network Inference on Python Backend Server
+  // 1. Attempt Real Live Neural Network Inference on Python Backend Server (Render Cloud / Localhost)
   try {
     const apiUrl = getBackendPredictUrl();
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
+
+    // If cloud server (Render free tier) takes more than 2 seconds, inform the user:
+    const wakeupTimer = setTimeout(() => {
+      predStatus.textContent = "⏳ Cloud server waking up from sleep (Render free tier takes ~15-20s)... Please wait...";
+    }, 2000);
+
+    // Allow up to 35 seconds for cold start on Render Free tier
+    const abortTimer = setTimeout(() => controller.abort(), 35000);
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -405,7 +407,8 @@ async function predictCurrentImage(expectedSign = null) {
       }),
       signal: controller.signal
     });
-    clearTimeout(timer);
+    clearTimeout(wakeupTimer);
+    clearTimeout(abortTimer);
 
     if (response.ok) {
       const data = await response.json();
@@ -419,7 +422,7 @@ async function predictCurrentImage(expectedSign = null) {
         latency_ms: latency,
         engine: data.model_used || (selectedModel === "fine_tuned" ? "Fine-Tuned MobileNetV2 (asl_model.keras)" : "Custom Deep CNN (custom_asl_model.keras)"),
         live_backend: true,
-        source: "Python Deep Learning Server (app.py)"
+        source: "Python Deep Learning Server (Render Cloud)"
       });
       return;
     }
@@ -456,7 +459,7 @@ async function predictCurrentImage(expectedSign = null) {
     latency_ms: Math.round(performance.now() - startTime),
     engine: "No Model Executed",
     live_backend: false,
-    error_msg: "Python Backend Server (app.py) Offline hai! Model run nahi ho saka."
+    error_msg: "Python Backend Server (Render Cloud) Offline hai! Model run nahi ho saka."
   });
 }
 
@@ -839,19 +842,31 @@ function copyLinkedInPost() {
 }
 
 // ==============================================================================
-// Cloud Backend Connection Manager (Hugging Face / Railway / Localhost)
+// ==============================================================================
+// Cloud Backend Connection Manager (Render Production / Localhost / Custom)
 // ==============================================================================
 
+const DEFAULT_BACKEND_URL = "https://asl-alphabet-deep-learning.onrender.com";
+
 function getBackendBaseUrl() {
+  // 1. If user entered a custom URL via modal and saved it, use that:
   const saved = localStorage.getItem("asl_backend_url");
-  if (saved && saved.trim()) return saved.trim().replace(/\/+$/, "");
+  if (saved && saved.trim()) {
+    return saved.trim().replace(/\/+$/, "");
+  }
+
+  // 2. If running locally via python app.py on port 5000:
+  if ((window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") && window.location.port === "5000") {
+    return window.location.origin;
+  }
+
+  // 3. If window.BACKEND_CONFIG is provided with an explicit apiUrl:
   if (window.BACKEND_CONFIG && window.BACKEND_CONFIG.apiUrl && window.BACKEND_CONFIG.apiUrl.trim()) {
     return window.BACKEND_CONFIG.apiUrl.trim().replace(/\/+$/, "");
   }
-  if (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
-    return window.location.origin;
-  }
-  return "";
+
+  // 4. Default Fallback: Production Cloud Backend on Render
+  return DEFAULT_BACKEND_URL;
 }
 
 function getBackendPredictUrl() {
@@ -865,24 +880,33 @@ async function checkBackendHealth() {
   const modeCode = document.getElementById("backend-status-mode");
   const baseUrl = getBackendBaseUrl();
 
-  if (!baseUrl && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
-    if (dot) {
-      dot.style.background = "#10b981";
-      dot.style.boxShadow = "0 0 10px #10b981";
-    }
-    if (label) label.textContent = "🟢 In-Browser Neural Engine (TFLite WebAssembly Active • Zero Server Needed)";
-    if (modeCode) modeCode.textContent = "TFLite WebAssembly (Self-Contained)";
-    return;
-  }
-
   const healthUrl = (baseUrl ? baseUrl : "") + "/api/health";
-  if (label) label.textContent = `Connecting to ${baseUrl || "Localhost"}...`;
+  const displayHost = (baseUrl || "Render Cloud").replace(/^https?:\/\//, "");
+
+  if (label) label.textContent = `Connecting to ${displayHost}...`;
+
+  let isChecking = true;
+  const wakingTimer = setTimeout(() => {
+    if (isChecking) {
+      if (dot) {
+        dot.style.background = "#f59e0b";
+        dot.style.boxShadow = "0 0 10px #f59e0b";
+      }
+      if (label) label.textContent = `🟡 Server Waking Up (${displayHost})...`;
+      if (modeCode) modeCode.textContent = "Waking from standby...";
+    }
+  }, 2500);
 
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 6000);
-    const res = await fetch(healthUrl, { signal: controller.signal, headers: { "Bypass-Tunnel-Reminder": "true" } });
+    const timer = setTimeout(() => controller.abort(), 30000); // 30s tolerance for Render cold start
+    const res = await fetch(healthUrl, {
+      signal: controller.signal,
+      headers: { "Bypass-Tunnel-Reminder": "true" }
+    });
     clearTimeout(timer);
+    isChecking = false;
+    clearTimeout(wakingTimer);
 
     if (res.ok) {
       const data = await res.json();
@@ -890,17 +914,19 @@ async function checkBackendHealth() {
         dot.style.background = "#10b981";
         dot.style.boxShadow = "0 0 10px #10b981";
       }
-      if (label) label.textContent = `🟢 Connected: ${baseUrl || window.location.origin}`;
-      if (modeCode) modeCode.textContent = "Live Neural Backend (Active)";
+      if (label) label.textContent = `🟢 Connected: ${displayHost}`;
+      if (modeCode) modeCode.textContent = `Live Neural Backend (${data.loaded_models ? data.loaded_models.length : 2} Models Active)`;
     } else {
       throw new Error(`HTTP ${res.status}`);
     }
   } catch (err) {
+    isChecking = false;
+    clearTimeout(wakingTimer);
     if (dot) {
       dot.style.background = "#ef4444";
       dot.style.boxShadow = "0 0 10px #ef4444";
     }
-    if (label) label.textContent = `🔴 Offline (${baseUrl || "localhost:5000"}) - Click ⚙️ to change`;
+    if (label) label.textContent = `🔴 Offline (${displayHost}) - Click ⚙️ to change`;
     if (modeCode) modeCode.textContent = "Backend Offline (Click ⚙️ to Connect)";
   }
 }
@@ -910,6 +936,7 @@ function initBackendManager() {
   const modal = document.getElementById("backend-modal");
   const btnEdit = document.getElementById("btn-edit-backend");
   const btnCancel = document.getElementById("btn-cancel-backend");
+  const btnReset = document.getElementById("btn-reset-backend");
   const btnTest = document.getElementById("btn-test-backend");
   const btnSave = document.getElementById("btn-save-backend");
   const inputUrl = document.getElementById("input-backend-url");
@@ -919,8 +946,13 @@ function initBackendManager() {
 
   if (btnEdit) {
     btnEdit.addEventListener("click", () => {
-      inputUrl.value = localStorage.getItem("asl_backend_url") || (window.BACKEND_CONFIG ? window.BACKEND_CONFIG.apiUrl : "") || "";
-      statusEl.innerHTML = "";
+      const customUrl = localStorage.getItem("asl_backend_url");
+      inputUrl.value = customUrl || "";
+      if (statusEl) {
+        statusEl.innerHTML = customUrl
+          ? `<span style="color: #38bdf8;">Custom URL active: <code>${customUrl}</code></span>`
+          : `<span style="color: #94a3b8;">Default Render Cloud backend is active (<code>${DEFAULT_BACKEND_URL}</code>). Leave empty to keep default.</span>`;
+      }
       modal.style.display = "flex";
     });
   }
@@ -931,20 +963,35 @@ function initBackendManager() {
     });
   }
 
+  if (btnReset) {
+    btnReset.addEventListener("click", () => {
+      inputUrl.value = "";
+      localStorage.removeItem("asl_backend_url");
+      if (statusEl) {
+        statusEl.innerHTML = `<span style="color: #10b981;">🔄 Reset to default Render server (<code>${DEFAULT_BACKEND_URL}</code>). Click Save &amp; Connect.</span>`;
+      }
+    });
+  }
+
   modal.addEventListener("click", (e) => {
     if (e.target === modal) modal.style.display = "none";
   });
 
   if (btnTest) {
     btnTest.addEventListener("click", async () => {
-      const testUrl = (inputUrl.value || "").trim().replace(/\/+$/, "");
+      let testUrl = (inputUrl.value || "").trim().replace(/\/+$/, "");
       if (!testUrl) {
-        statusEl.innerHTML = `<span style="color: #ef4444;">⚠️ Please enter a valid URL.</span>`;
-        return;
+        testUrl = DEFAULT_BACKEND_URL;
       }
-      statusEl.innerHTML = `<span style="color: #38bdf8;">⏳ Testing connection to ${testUrl}/api/health...</span>`;
+      statusEl.innerHTML = `<span style="color: #38bdf8;">⏳ Testing connection to ${testUrl}/api/health... (Takes ~15s if waking up)</span>`;
       try {
-        const res = await fetch(`${testUrl}/api/health`, { headers: { "Bypass-Tunnel-Reminder": "true" } });
+        const controller = new AbortController();
+        const testTimer = setTimeout(() => controller.abort(), 35000);
+        const res = await fetch(`${testUrl}/api/health`, {
+          signal: controller.signal,
+          headers: { "Bypass-Tunnel-Reminder": "true" }
+        });
+        clearTimeout(testTimer);
         if (res.ok) {
           const data = await res.json();
           statusEl.innerHTML = `<span style="color: #10b981;">✅ Connected! Server: ${data.service || "ASL Backend"} (${data.loaded_models ? data.loaded_models.length : 2} models active)</span>`;
@@ -952,7 +999,7 @@ function initBackendManager() {
           statusEl.innerHTML = `<span style="color: #ef4444;">❌ Server returned HTTP ${res.status}. Check URL or CORS.</span>`;
         }
       } catch (err) {
-        statusEl.innerHTML = `<span style="color: #ef4444;">❌ Connection failed: ${err.message}. Ensure backend is running with CORS enabled.</span>`;
+        statusEl.innerHTML = `<span style="color: #ef4444;">❌ Connection failed: ${err.message}. If sleeping, wait a moment and test again.</span>`;
       }
     });
   }
@@ -960,7 +1007,7 @@ function initBackendManager() {
   if (btnSave) {
     btnSave.addEventListener("click", () => {
       const newUrl = (inputUrl.value || "").trim().replace(/\/+$/, "");
-      if (newUrl) {
+      if (newUrl && newUrl !== DEFAULT_BACKEND_URL) {
         localStorage.setItem("asl_backend_url", newUrl);
       } else {
         localStorage.removeItem("asl_backend_url");
@@ -969,6 +1016,26 @@ function initBackendManager() {
       checkBackendHealth();
     });
   }
+
+  // Periodic Keep-Alive Ping: Render free tier spins down after 15 min of inactivity.
+  // Pinging /api/health every 3.5 minutes while the browser tab is open keeps Render warm and awake.
+  setInterval(() => {
+    const url = getBackendBaseUrl();
+    if (url && url.includes("onrender.com")) {
+      fetch(`${url}/api/health`, { headers: { "Bypass-Tunnel-Reminder": "true" } })
+        .then(res => {
+          if (res.ok) console.log("💓 Keep-alive heartbeat acknowledged by Render Cloud");
+        })
+        .catch(() => {});
+    }
+  }, 3.5 * 60 * 1000);
+
+  // Wake / verify health when user switches back to this tab
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      checkBackendHealth();
+    }
+  });
 
   // Initial check on page load
   checkBackendHealth();
