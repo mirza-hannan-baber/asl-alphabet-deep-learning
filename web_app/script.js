@@ -387,94 +387,77 @@ async function predictCurrentImage(expectedSign = null) {
   const isLocalHost = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
   const shouldTryBackend = Boolean(savedUrl) || isLocalHost;
 
-  if (shouldTryBackend) {
-    try {
-      const apiUrl = getBackendPredictUrl();
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Bypass-Tunnel-Reminder": "true"
-        },
-        body: JSON.stringify({
-          image: currentImageDataUrl,
-          model: selectedModel
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const latency = data.latency_ms || Math.round(performance.now() - startTime);
-
-        renderPredictionResults({
-          top_prediction: data.top_prediction,
-          confidence: data.confidence,
-          top5: data.top5 || [],
-          latency_ms: latency,
-          engine: data.model_used || (selectedModel === "fine_tuned" ? "Fine-Tuned MobileNetV2 (asl_model.keras)" : "Custom Deep CNN (custom_asl_weights.weights.h5)"),
-          live_backend: true
-        });
-        return;
-      }
-    } catch (err) {
-      console.warn("Backend server not reachable, switching to In-Browser Neural Engine:", err);
-    }
-  }
-
-  // ============================================================================
-  // Client-Side In-Browser Real Deep Learning Inference Engine (TFLite / WebAssembly)
-  // ============================================================================
+  // 1. Attempt Real Live Neural Network Inference on Python Backend Server
   try {
-    const targetSign = expectedSign || (fname ? fname.split(".")[0].split("_")[0].toUpperCase() : null);
+    const apiUrl = getBackendPredictUrl();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
 
-    if (targetSign && CLASS_NAMES.includes(targetSign)) {
-      // Known test sample letter (e.g. A_test.jpg, C_test.jpg)
-      const benchmarkConf = selectedModel === "fine_tuned" ? 0.945 : 0.982;
-      const remaining = CLASS_NAMES.filter(c => c !== targetSign);
-      const latency = Math.max(Math.round(performance.now() - startTime), 15);
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Bypass-Tunnel-Reminder": "true"
+      },
+      body: JSON.stringify({
+        image: currentImageDataUrl,
+        model: selectedModel
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+
+    if (response.ok) {
+      const data = await response.json();
+      const latency = data.latency_ms || Math.round(performance.now() - startTime);
+
       renderPredictionResults({
-        top_prediction: targetSign,
-        confidence: benchmarkConf,
-        top5: [
-          { class: targetSign, confidence: benchmarkConf },
-          { class: remaining[0], confidence: 0.022 },
-          { class: remaining[1], confidence: 0.014 },
-          { class: remaining[2], confidence: 0.010 },
-          { class: remaining[3], confidence: 0.005 }
-        ],
+        real_model_executed: true,
+        top_prediction: data.top_prediction,
+        confidence: data.confidence,
+        top5: data.top5 || [],
         latency_ms: latency,
-        engine: selectedModel === "fine_tuned" 
-          ? "MobileNetV2 Fine-Tuned (asl_model.tflite - WebAssembly 2.8 MB)" 
-          : "Custom Deep CNN (custom_asl_model.tflite - WebAssembly 1.5 MB)",
-        live_backend: false
+        engine: data.model_used || (selectedModel === "fine_tuned" ? "Fine-Tuned MobileNetV2 (asl_model.keras)" : "Custom Deep CNN (custom_asl_model.keras)"),
+        live_backend: true,
+        source: "Python Deep Learning Server (app.py)"
       });
       return;
     }
-
-    // Custom user upload or webcam frame
-    const neuralRes = await runClientNeuralPrediction(previewImg, selectedModel);
-    renderPredictionResults(neuralRes);
-  } catch (clientErr) {
-    console.error("Client inference error:", clientErr);
-    const fallbackSign = analyzeHandGestureImage(previewImg);
-    const remaining = CLASS_NAMES.filter(c => c !== fallbackSign);
-    renderPredictionResults({
-      top_prediction: fallbackSign,
-      confidence: 0.925,
-      top5: [
-        { class: fallbackSign, confidence: 0.925 },
-        { class: remaining[0], confidence: 0.035 },
-        { class: remaining[1], confidence: 0.020 },
-        { class: remaining[2], confidence: 0.012 },
-        { class: remaining[3], confidence: 0.008 }
-      ],
-      latency_ms: Math.max(Math.round(performance.now() - startTime), 18),
-      engine: selectedModel === "fine_tuned"
-        ? "MobileNetV2 Neural Engine (Client-Side)"
-        : "Custom Deep CNN (Client-Side)",
-      live_backend: false
-    });
+  } catch (backendErr) {
+    console.warn("Backend server not reachable:", backendErr.message);
   }
+
+  // 2. Attempt In-Browser TFLite WebAssembly Neural Network Inference
+  try {
+    const tfliteRes = await runClientNeuralPrediction(previewImg, selectedModel);
+    if (tfliteRes && tfliteRes.is_real_tflite) {
+      renderPredictionResults({
+        real_model_executed: true,
+        top_prediction: tfliteRes.top_prediction,
+        confidence: tfliteRes.confidence,
+        top5: tfliteRes.top5,
+        latency_ms: tfliteRes.latency_ms,
+        engine: tfliteRes.engine,
+        live_backend: false,
+        source: "In-Browser TFLite WebAssembly"
+      });
+      return;
+    }
+  } catch (tfliteErr) {
+    console.warn("In-browser TFLite inference exception:", tfliteErr);
+  }
+
+  // 3. IF NEITHER RUNS: EXPLICITLY TELL THE USER THAT THE MODEL DID NOT RUN!
+  renderPredictionResults({
+    real_model_executed: false,
+    top_prediction: "None",
+    confidence: 0.0,
+    top5: [],
+    latency_ms: Math.round(performance.now() - startTime),
+    engine: "No Model Executed",
+    live_backend: false,
+    error_msg: "Python Backend Server (app.py) Offline hai! Model run nahi ho saka."
+  });
 }
 
 // ==============================================================================
@@ -522,83 +505,52 @@ async function getClientTfliteModel(modelType = "fine_tuned") {
   return null;
 }
 
-// Background pre-fetch of TFLite model so it's warm
-setTimeout(() => {
-  getClientTfliteModel("fine_tuned").catch(() => {});
-}, 1000);
-
 async function runClientNeuralPrediction(imgEl, selectedModel = "fine_tuned") {
   const startInfer = performance.now();
   
-  // 1. Try real TFLite WebAssembly inference
-  try {
-    const tfliteModel = await getClientTfliteModel(selectedModel);
-    if (tfliteModel && typeof tf !== "undefined") {
-      const result = tf.tidy(() => {
-        const pixels = tf.browser.fromPixels(imgEl);
-        const resized = tf.image.resizeBilinear(pixels, [160, 160]);
-        const expanded = resized.expandDims(0);
-        const inputTensor = expanded.cast("float32");
+  // Real TFLite WebAssembly inference
+  const tfliteModel = await getClientTfliteModel(selectedModel);
+  if (tfliteModel && typeof tf !== "undefined" && imgEl && imgEl.complete && imgEl.naturalWidth) {
+    const result = tf.tidy(() => {
+      const pixels = tf.browser.fromPixels(imgEl);
+      const resized = tf.image.resizeBilinear(pixels, [160, 160]);
+      const expanded = resized.expandDims(0);
+      const inputTensor = expanded.cast("float32");
 
-        const output = tfliteModel.predict(inputTensor);
-        return output.dataSync();
-      });
+      const output = tfliteModel.predict(inputTensor);
+      return output.dataSync();
+    });
 
-      if (result && result.length >= 26) {
-        let maxIdx = 0;
-        let maxVal = result[0];
-        for (let i = 1; i < result.length; i++) {
-          if (result[i] > maxVal) {
-            maxVal = result[i];
-            maxIdx = i;
-          }
+    if (result && result.length >= 26) {
+      let maxIdx = 0;
+      let maxVal = result[0];
+      for (let i = 1; i < result.length; i++) {
+        if (result[i] > maxVal) {
+          maxVal = result[i];
+          maxIdx = i;
         }
-
-        const indexed = Array.from(result).map((val, idx) => ({
-          class: CLASS_NAMES[idx] || `Class ${idx}`,
-          confidence: Math.round(val * 10000) / 10000
-        }));
-        indexed.sort((a, b) => b.confidence - a.confidence);
-
-        const lat = Math.round(performance.now() - startInfer);
-        return {
-          top_prediction: CLASS_NAMES[maxIdx],
-          confidence: Math.round(maxVal * 1000) / 1000,
-          top5: indexed.slice(0, 5),
-          latency_ms: Math.max(lat, 14),
-          engine: selectedModel === "fine_tuned" 
-            ? "MobileNetV2 Fine-Tuned (asl_model.tflite - WebAssembly 2.8 MB)" 
-            : "Custom Deep CNN (custom_asl_model.tflite - WebAssembly 1.5 MB)",
-          live_backend: false
-        };
       }
+
+      const indexed = Array.from(result).map((val, idx) => ({
+        class: CLASS_NAMES[idx] || `Class ${idx}`,
+        confidence: Math.round(val * 10000) / 10000
+      }));
+      indexed.sort((a, b) => b.confidence - a.confidence);
+
+      const lat = Math.round(performance.now() - startInfer);
+      return {
+        is_real_tflite: true,
+        top_prediction: CLASS_NAMES[maxIdx],
+        confidence: Math.round(maxVal * 1000) / 1000,
+        top5: indexed.slice(0, 5),
+        latency_ms: Math.max(lat, 14),
+        engine: selectedModel === "fine_tuned" 
+          ? "MobileNetV2 Fine-Tuned (asl_model.tflite - WebAssembly 2.8 MB)" 
+          : "Custom Deep CNN (custom_asl_model.tflite - WebAssembly 1.5 MB)"
+      };
     }
-  } catch (err) {
-    console.warn("[Neural Engine] TFLite inference exception:", err);
   }
-
-  // 2. Intelligent Computer Vision Contour Feature Fallback (if TFLite WASM not supported in browser)
-  const geomSign = analyzeHandGestureImage(imgEl);
-  const conf = selectedModel === "fine_tuned" ? 0.942 : 0.968;
-  const remaining = CLASS_NAMES.filter(c => c !== geomSign);
-  const lat = Math.round(performance.now() - startInfer);
-
-  return {
-    top_prediction: geomSign,
-    confidence: conf,
-    top5: [
-      { class: geomSign, confidence: conf },
-      { class: remaining[0], confidence: 0.024 },
-      { class: remaining[1], confidence: 0.016 },
-      { class: remaining[2], confidence: 0.011 },
-      { class: remaining[3], confidence: 0.007 }
-    ],
-    latency_ms: Math.max(lat, 16),
-    engine: selectedModel === "fine_tuned"
-      ? "MobileNetV2 Edge Engine (Client-Side Neural Pipeline)"
-      : "Custom Deep CNN (Client-Side Neural Pipeline)",
-    live_backend: false
-  };
+  return null;
 }
 
 // Client-Side Geometric Gesture Contour Analyzer
@@ -668,33 +620,72 @@ function renderPredictionResults(res) {
   const topScoreEl = document.getElementById("top-pred-score");
   const predStatus = document.getElementById("pred-status");
   const latencyVal = document.getElementById("latency-val");
-
-  topLetterEl.textContent = res.top_prediction;
-  topNameEl.textContent = `"${res.top_prediction}"`;
-  topScoreEl.textContent = `${(res.confidence * 100).toFixed(1)}%`;
-  latencyVal.textContent = `~${res.latency_ms} ms`;
-
-  predStatus.textContent = `Inference Complete: "${res.top_prediction}" via ${res.engine || "Deep Learning"}`;
-  predStatus.className = "pred-status-badge badge-active";
-
-  // Update backend status indicator
+  const execBanner = document.getElementById("model-execution-banner");
+  const execIcon = document.getElementById("model-exec-icon");
+  const execText = document.getElementById("model-exec-text");
   const backendModeEl = document.getElementById("backend-status-mode");
-  if (backendModeEl) {
-    if (res.live_backend) {
-      backendModeEl.textContent = "🟢 Live Python Backend";
-      backendModeEl.style.color = "#4ade80";
-    } else {
-      backendModeEl.textContent = "⚡ Benchmark Mode";
-      backendModeEl.style.color = "#38bdf8";
-    }
-  }
 
-  // Render Top 5 Probabilities
-  const topList = res.top5 || [];
-  for (let i = 0; i < 5; i++) {
-    if (topList[i]) {
-      updateProbRow(i + 1, topList[i].class, topList[i].confidence);
-    } else {
+  if (res.real_model_executed) {
+    // REAL MODEL EXECUTED SUCCESSFULLY
+    if (execBanner) {
+      execBanner.style.background = "rgba(16, 185, 129, 0.16)";
+      execBanner.style.border = "1px solid #10b981";
+      execBanner.style.color = "#34d399";
+    }
+    if (execIcon) execIcon.textContent = "✅";
+    if (execText) {
+      execText.innerHTML = `<strong>ASLI MODEL RUN HOWA:</strong> ${res.engine} &bull; Latency: ${res.latency_ms}ms &bull; Source: ${res.source || "Python Neural Server"}`;
+    }
+
+    topLetterEl.textContent = res.top_prediction;
+    topNameEl.textContent = `"${res.top_prediction}"`;
+    topScoreEl.textContent = `${(res.confidence * 100).toFixed(1)}%`;
+    latencyVal.textContent = `~${res.latency_ms} ms`;
+
+    predStatus.textContent = `✅ Live Deep Learning Prediction: "${res.top_prediction}" via ${res.engine}`;
+    predStatus.className = "pred-status-badge badge-active";
+
+    if (backendModeEl) {
+      backendModeEl.textContent = res.live_backend ? "🟢 Live Python Backend" : "🟢 In-Browser TFLite Engine";
+      backendModeEl.style.color = "#4ade80";
+    }
+
+    // Render Real Top 5 Probabilities
+    const topList = res.top5 || [];
+    for (let i = 0; i < 5; i++) {
+      if (topList[i]) {
+        updateProbRow(i + 1, topList[i].class, topList[i].confidence);
+      } else {
+        updateProbRow(i + 1, "-", 0);
+      }
+    }
+  } else {
+    // REAL MODEL DID NOT RUN (OFFLINE)
+    if (execBanner) {
+      execBanner.style.background = "rgba(239, 68, 68, 0.20)";
+      execBanner.style.border = "1px solid #ef4444";
+      execBanner.style.color = "#f87171";
+    }
+    if (execIcon) execIcon.textContent = "❌";
+    if (execText) {
+      execText.innerHTML = `<strong>MODEL NAHI RUN HOWA:</strong> ${res.error_msg || "Python Backend Server (app.py) Offline hai!"}`;
+    }
+
+    topLetterEl.textContent = "❌";
+    topNameEl.textContent = "Model Nahi Run Howa";
+    topScoreEl.textContent = "0.0%";
+    latencyVal.textContent = "0 ms";
+
+    predStatus.textContent = "❌ Python Server (app.py) Offline hai - Real Model compute nahi hua!";
+    predStatus.className = "pred-status-badge badge-error";
+
+    if (backendModeEl) {
+      backendModeEl.textContent = "🔴 Backend Offline (Model Not Run)";
+      backendModeEl.style.color = "#ef4444";
+    }
+
+    // Reset all probability bars to 0
+    for (let i = 0; i < 5; i++) {
       updateProbRow(i + 1, "-", 0);
     }
   }
