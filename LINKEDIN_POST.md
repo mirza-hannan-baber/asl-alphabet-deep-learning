@@ -35,7 +35,7 @@ Over 70 million speech and hearing-impaired individuals globally rely on sign la
 
 ### 🔗 Project Links:
 🌐 **Live Vercel Web Demo:** [INSERT_YOUR_VERCEL_URL_HERE]  
-📂 **GitHub Repository:** [INSERT_YOUR_GITHUB_REPO_URL_HERE]  
+📂 **GitHub Repository:** https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning  
 🎥 **YouTube Presentation & Voiceover:** https://youtu.be/ZnWb24NQmps  
 📄 **Academic Report & Slides:** Included in GitHub repository & Web Hub
 

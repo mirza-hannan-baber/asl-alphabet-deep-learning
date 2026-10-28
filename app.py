@@ -226,6 +226,13 @@ def predict():
             "error": str(e)
         }), 500
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+    return response
+
 def open_browser(port):
     """Auto open browser after 1 second."""
     time.sleep(1.0)
@@ -234,8 +241,8 @@ def open_browser(port):
 if __name__ == "__main__":
     PORT = 5000
     print("=" * 70)
-    print("🤟 ASL Alphabet Recognition Deep Learning System")
-    print(f"🚀 Starting Python Server immediately on http://127.0.0.1:{PORT}")
+    print("[ASL ALPHABET RECOGNITION] Deep Learning Inference Server")
+    print(f"[STARTING] Python Server on http://0.0.0.0:{PORT} (Local: http://127.0.0.1:{PORT})")
     print("=" * 70)
 
     # 1. Start model loading in background thread (non-blocking)
@@ -244,5 +251,5 @@ if __name__ == "__main__":
     # 2. Launch browser thread
     threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
 
-    # 3. Run Flask server immediately so port 5000 responds with zero delay
-    app.run(host="127.0.0.1", port=PORT, debug=False)
+    # 3. Run Flask server on all interfaces so localhost and 192.168.x.x both connect
+    app.run(host="0.0.0.0", port=PORT, debug=False)
