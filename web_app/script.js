@@ -381,17 +381,22 @@ async function predictCurrentImage(expectedSign = null) {
   const modelSelect = document.getElementById("model-select");
   const selectedModel = modelSelect ? modelSelect.value : "fine_tuned";
 
-  // Determine API URL (default relative, supports custom cloud backend or localhost)
+  // Determine API URL:
+  // - If running on localhost:5000 -> uses direct relative /api/predict
+  // - If running on Vercel -> connects to live cloud tunnel (https://asl-mirza-model.loca.lt/api/predict)
   let apiUrl = "/api/predict";
-  if (window.location.protocol === "file:") {
-    apiUrl = "http://127.0.0.1:5000/api/predict";
+  if (window.location.hostname.includes("vercel.app") || window.location.protocol === "file:") {
+    apiUrl = "https://asl-mirza-model.loca.lt/api/predict";
   }
 
   try {
     // Attempt real live neural network inference on Python server
     const response = await fetch(apiUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Bypass-Tunnel-Reminder": "true"
+      },
       body: JSON.stringify({
         image: currentImageDataUrl,
         model: selectedModel
