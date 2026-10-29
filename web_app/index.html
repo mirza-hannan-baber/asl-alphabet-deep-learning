@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASL Alphabet Recognition | Deep Learning Custom CNN & MobileNetV2</title>
-  <meta name="description" content="Interactive Deep Learning American Sign Language (ASL) Alphabet recognition system featuring custom CNN architecture, model weights, live prediction, and dataset analysis.">
+  <meta name="description"
+    content="Interactive Deep Learning American Sign Language (ASL) Alphabet recognition system featuring custom CNN architecture, model weights, live prediction, and dataset analysis.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Header / Navigation -->
   <header class="navbar" id="main-navbar">
@@ -18,15 +23,20 @@
         <span class="brand-badge">🤟 AI & DL</span>
         <span class="brand-title">ASL Recognizer</span>
       </div>
-      <button class="mobile-nav-toggle" id="btn-mobile-nav" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <button class="mobile-nav-toggle" id="btn-mobile-nav" aria-label="Toggle navigation"
+        aria-expanded="false">☰</button>
       <nav class="nav-links" id="main-nav-links">
         <a href="#demo" class="nav-link active" data-target="demo">Live Demo</a>
         <a href="#models" class="nav-link" data-target="models">Model & Weights</a>
         <a href="#dataset" class="nav-link" data-target="dataset">Dataset</a>
         <a href="#report" class="nav-link" data-target="report">Project Report</a>
         <a href="#presentation" class="nav-link" data-target="presentation">Presentation</a>
-        <a href="https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning" target="_blank" rel="noopener noreferrer" class="btn btn-nav" id="github-repo-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        <a href="https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning" target="_blank"
+          rel="noopener noreferrer" class="btn btn-nav" id="github-repo-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
           GitHub
         </a>
       </nav>
@@ -38,10 +48,12 @@
     <div class="hero-bg-glow"></div>
     <div class="container hero-content">
       <div class="badge-tag">🎓 Deep Learning Semester Project</div>
-      <h1 class="hero-title">American Sign Language Recognition with <span class="gradient-text">Custom Deep CNN</span></h1>
+      <h1 class="hero-title">American Sign Language Recognition with <span class="gradient-text">Custom Deep CNN</span>
+      </h1>
       <p class="hero-subtitle">
         An end-to-end deep learning system trained on <strong>87,000 ASL hand gestures</strong> across 29 classes.
-        Featuring custom convolutional feature hierarchy, extracted model weights, live webcam classification, and comprehensive evaluation.
+        Featuring custom convolutional feature hierarchy, extracted model weights, live webcam classification, and
+        comprehensive evaluation.
       </p>
 
       <!-- Student & Supervisor Profile Banner -->
@@ -57,7 +69,7 @@
           <span class="meta-sub">Department of Computer Science</span>
         </div>
       </div>
-      
+
       <div class="hero-stats">
         <div class="stat-card">
           <div class="stat-number">87,000</div>
@@ -91,7 +103,8 @@
       <div class="section-header">
         <div class="badge-tag">Interactive AI</div>
         <h2 class="section-title">Live ASL Gesture Detection</h2>
-        <p class="section-desc">Test real-time sign language recognition using your webcam or by uploading a hand sign image.</p>
+        <p class="section-desc">Test real-time sign language recognition using your webcam or by uploading a hand sign
+          image.</p>
       </div>
 
       <div class="demo-grid">
@@ -114,11 +127,17 @@
             <div class="drop-zone" id="drop-zone">
               <div class="drop-content" id="drop-prompt">
                 <div class="upload-icon-circle">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
                 </div>
                 <p class="drop-text">Drag &amp; drop an ASL sign image here</p>
                 <p class="drop-subtext">Supports JPG, PNG, JPEG &bull; Resized to 160×160 RGB tensor</p>
-                <button type="button" class="btn btn-secondary btn-sm" id="btn-browse-file" onclick="document.getElementById('file-input').click()">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-browse-file"
+                  onclick="document.getElementById('file-input').click()">
                   📂 Browse From Computer
                 </button>
               </div>
@@ -147,7 +166,8 @@
             </div>
             <div class="webcam-controls">
               <button class="btn btn-primary" id="btn-toggle-cam" onclick="toggleWebcam()">Start Webcam</button>
-              <button class="btn btn-secondary hidden" id="btn-snap-cam" onclick="captureWebcamFrame()">Capture &amp; Predict</button>
+              <button class="btn btn-secondary hidden" id="btn-snap-cam" onclick="captureWebcamFrame()">Capture &amp;
+                Predict</button>
             </div>
           </div>
 
@@ -158,7 +178,8 @@
                 <span class="active-dot"></span>
                 <span>Active Image Loaded for Inference</span>
               </div>
-              <button type="button" class="btn-clear-img" onclick="clearSelectedImage()" title="Remove Image">✕ Remove</button>
+              <button type="button" class="btn-clear-img" onclick="clearSelectedImage()" title="Remove Image">✕
+                Remove</button>
             </div>
             <div class="active-card-body">
               <div class="active-img-wrapper">
@@ -175,9 +196,11 @@
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Model Target:</span>
-                  <span class="detail-val highlight-val" id="active-model-name">MobileNetV2 Fine-Tuned (asl_model.keras)</span>
+                  <span class="detail-val highlight-val" id="active-model-name">MobileNetV2 Fine-Tuned
+                    (asl_model.keras)</span>
                 </div>
-                <button type="button" class="btn btn-primary btn-run-pred" id="btn-run-pred" onclick="predictCurrentImage()">
+                <button type="button" class="btn btn-primary btn-run-pred" id="btn-run-pred"
+                  onclick="predictCurrentImage()">
                   ⚡ Run Live Prediction (asl_model.keras)
                 </button>
               </div>
@@ -199,20 +222,22 @@
             <h3 class="panel-heading">Real-Time Inference Results</h3>
             <span class="engine-badge" id="engine-badge">MobileNetV2 Engine</span>
           </div>
-          
+
           <div class="prediction-main" id="prediction-main">
             <div class="pred-letter-circle" id="pred-letter-circle">
               <span class="pred-letter" id="top-pred-letter">?</span>
             </div>
             <div class="pred-meta">
-              <div class="pred-confidence-title">Predicted Sign: <span id="top-pred-name" class="highlight">-</span></div>
+              <div class="pred-confidence-title">Predicted Sign: <span id="top-pred-name" class="highlight">-</span>
+              </div>
               <div class="pred-confidence-score">Confidence: <span id="top-pred-score">0.0%</span></div>
               <div class="pred-status-badge badge-active" id="pred-status">Waiting for input image...</div>
             </div>
           </div>
 
           <!-- Real Model Execution Verification Banner (Honesty & Transparency Indicator) -->
-          <div id="model-execution-banner" style="margin: 14px 0; padding: 12px 16px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); color: #94a3b8; transition: all 0.3s ease;">
+          <div id="model-execution-banner"
+            style="margin: 14px 0; padding: 12px 16px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); color: #94a3b8; transition: all 0.3s ease;">
             <span id="model-exec-icon" style="font-size: 1.15rem;">ℹ️</span>
             <span id="model-exec-text">Model Status: Ready for input image</span>
           </div>
@@ -223,27 +248,37 @@
             <div class="prob-list" id="prob-list">
               <div class="prob-row">
                 <span class="prob-name" id="prob-1-name">-</span>
-                <div class="prob-bar-container"><div class="prob-bar" id="prob-1-bar" style="width: 0%"></div></div>
+                <div class="prob-bar-container">
+                  <div class="prob-bar" id="prob-1-bar" style="width: 0%"></div>
+                </div>
                 <span class="prob-val" id="prob-1-val">0%</span>
               </div>
               <div class="prob-row">
                 <span class="prob-name" id="prob-2-name">-</span>
-                <div class="prob-bar-container"><div class="prob-bar" id="prob-2-bar" style="width: 0%"></div></div>
+                <div class="prob-bar-container">
+                  <div class="prob-bar" id="prob-2-bar" style="width: 0%"></div>
+                </div>
                 <span class="prob-val" id="prob-2-val">0%</span>
               </div>
               <div class="prob-row">
                 <span class="prob-name" id="prob-3-name">-</span>
-                <div class="prob-bar-container"><div class="prob-bar" id="prob-3-bar" style="width: 0%"></div></div>
+                <div class="prob-bar-container">
+                  <div class="prob-bar" id="prob-3-bar" style="width: 0%"></div>
+                </div>
                 <span class="prob-val" id="prob-3-val">0%</span>
               </div>
               <div class="prob-row">
                 <span class="prob-name" id="prob-4-name">-</span>
-                <div class="prob-bar-container"><div class="prob-bar" id="prob-4-bar" style="width: 0%"></div></div>
+                <div class="prob-bar-container">
+                  <div class="prob-bar" id="prob-4-bar" style="width: 0%"></div>
+                </div>
                 <span class="prob-val" id="prob-4-val">0%</span>
               </div>
               <div class="prob-row">
                 <span class="prob-name" id="prob-5-name">-</span>
-                <div class="prob-bar-container"><div class="prob-bar" id="prob-5-bar" style="width: 0%"></div></div>
+                <div class="prob-bar-container">
+                  <div class="prob-bar" id="prob-5-bar" style="width: 0%"></div>
+                </div>
                 <span class="prob-val" id="prob-5-val">0%</span>
               </div>
             </div>
@@ -251,21 +286,28 @@
 
           <!-- Technical Inference Metadata -->
           <div class="tech-meta-box">
-            <div class="meta-item"><span>Model Weights:</span> <code id="active-meta-weights">asl_model.keras (99.6%)</code></div>
+            <div class="meta-item"><span>Model Weights:</span> <code
+                id="active-meta-weights">asl_model.keras (99.6%)</code></div>
             <div class="meta-item"><span>Input Shape:</span> <code>(160, 160, 3)</code></div>
-            <div class="meta-item"><span>Normalization:</span> <code id="active-meta-norm">[-1, 1] Rescaling</code></div>
+            <div class="meta-item"><span>Normalization:</span> <code id="active-meta-norm">[-1, 1] Rescaling</code>
+            </div>
             <div class="meta-item"><span>Inference Latency:</span> <code id="latency-val">~18 ms</code></div>
-            <div class="meta-item"><span>Inference Mode:</span> <code id="backend-status-mode">Live Neural Backend</code></div>
+            <div class="meta-item"><span>Inference Mode:</span> <code
+                id="backend-status-mode">Live Neural Backend</code></div>
           </div>
 
           <!-- Cloud Backend Connection Status Bar -->
-          <div class="backend-connection-bar" style="margin-top: 14px; padding: 12px 16px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.85rem;">
+          <div class="backend-connection-bar"
+            style="margin-top: 14px; padding: 12px 16px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.85rem;">
             <div style="display: flex; align-items: center; gap: 9px;">
-              <span id="backend-status-dot" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+              <span id="backend-status-dot"
+                style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
               <span style="color: #94a3b8; font-weight: 500;">Backend API:</span>
-              <code id="backend-url-label" style="color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;">Checking connection...</code>
+              <code id="backend-url-label"
+                style="color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;">Checking connection...</code>
             </div>
-            <button id="btn-edit-backend" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.78rem; border-radius: 6px; cursor: pointer;">
+            <button id="btn-edit-backend" class="btn btn-secondary"
+              style="padding: 4px 12px; font-size: 0.78rem; border-radius: 6px; cursor: pointer;">
               ⚙️ Connect / Change Backend
             </button>
           </div>
@@ -275,25 +317,32 @@
   </section>
 
   <!-- Backend Configuration Modal -->
-  <div id="backend-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: #0f172a; border: 1px solid #38bdf8; border-radius: 14px; padding: 26px; max-width: 520px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+  <div id="backend-modal"
+    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
+    <div
+      style="background: #0f172a; border: 1px solid #38bdf8; border-radius: 14px; padding: 26px; max-width: 520px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
       <h3 style="margin-top: 0; color: #f8fafc; font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
         ⚙️ Cloud Python Backend Settings
       </h3>
       <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.5;">
         Default Live Backend: <code style="color: #38bdf8;">https://asl-alphabet-deep-learning.onrender.com</code><br>
-        Agar aap koi custom backend (jaise localhost ya doosra server) connect karna chahein to yahan URL enter karein. Agar box khali hoga to default Render cloud backend hi chalega.
+        Agar aap koi custom backend (jaise localhost ya doosra server) connect karna chahein to yahan URL enter karein.
+        Agar box khali hoga to default Render cloud backend hi chalega.
       </p>
       <div style="margin: 16px 0;">
-        <label style="display: block; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Custom Backend Server URL (Optional):</label>
-        <input type="text" id="input-backend-url" placeholder="Default: https://asl-alphabet-deep-learning.onrender.com" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box;">
+        <label style="display: block; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Custom
+          Backend Server URL (Optional):</label>
+        <input type="text" id="input-backend-url" placeholder="Default: https://asl-alphabet-deep-learning.onrender.com"
+          style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box;">
       </div>
       <div id="backend-test-status" style="margin-bottom: 14px; font-size: 0.82rem; min-height: 20px;"></div>
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <button id="btn-reset-backend" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.82rem; color: #94a3b8;">🔄 Reset to Default</button>
+        <button id="btn-reset-backend" class="btn btn-secondary"
+          style="padding: 8px 14px; font-size: 0.82rem; color: #94a3b8;">🔄 Reset to Default</button>
         <div style="display: flex; gap: 10px;">
           <button id="btn-cancel-backend" class="btn btn-secondary" style="padding: 8px 16px;">Cancel</button>
-          <button id="btn-test-backend" class="btn btn-secondary" style="padding: 8px 16px; border-color: #38bdf8; color: #38bdf8;">⚡ Test Connection</button>
+          <button id="btn-test-backend" class="btn btn-secondary"
+            style="padding: 8px 16px; border-color: #38bdf8; color: #38bdf8;">⚡ Test Connection</button>
           <button id="btn-save-backend" class="btn btn-primary" style="padding: 8px 20px;">Save &amp; Connect</button>
         </div>
       </div>
@@ -307,7 +356,8 @@
         <div class="badge-tag">Requirement 2 & 3</div>
         <h2 class="section-title">Model Architectures & Weights Extraction Hub</h2>
         <p class="section-desc">
-          Automated evaluation scripts and evaluators can download trained weights, model architectures, and layer specifications directly from this hub.
+          Automated evaluation scripts and evaluators can download trained weights, model architectures, and layer
+          specifications directly from this hub.
         </p>
       </div>
 
@@ -316,7 +366,8 @@
           <div class="weight-icon">🔥</div>
           <div class="weight-info">
             <h3 class="weight-title">Fine-Tuned Model (Primary)</h3>
-            <p class="weight-desc">MobileNetV2 transfer learning model fine-tuned on ASL 87,000 dataset (Used for live predictions).</p>
+            <p class="weight-desc">MobileNetV2 transfer learning model fine-tuned on ASL 87,000 dataset (Used for live
+              predictions).</p>
             <div class="file-meta"><code>asl_model.keras</code> &bull; 26.9 MB &bull; 99.6% Accuracy</div>
           </div>
           <a href="./models/asl_model.keras" download id="download-finetuned-keras" class="btn btn-primary">
@@ -328,10 +379,12 @@
           <div class="weight-icon">⚖️</div>
           <div class="weight-info">
             <h3 class="weight-title">Custom Model Weights</h3>
-            <p class="weight-desc">Extracted standalone raw model weights tensor file via <code>model.save_weights()</code>.</p>
+            <p class="weight-desc">Extracted standalone raw model weights tensor file via
+              <code>model.save_weights()</code>.</p>
             <div class="file-meta"><code>custom_asl_weights.weights.h5</code> &bull; 5.91 MB</div>
           </div>
-          <a href="./models/custom_asl_weights.weights.h5" download id="download-custom-weights" class="btn btn-secondary">
+          <a href="./models/custom_asl_weights.weights.h5" download id="download-custom-weights"
+            class="btn btn-secondary">
             Download Weights (.weights.h5)
           </a>
         </div>
@@ -340,7 +393,8 @@
           <div class="weight-icon">📦</div>
           <div class="weight-info">
             <h3 class="weight-title">Full Custom Model</h3>
-            <p class="weight-desc">Complete compiled Keras model containing custom CNN architecture, weights, and optimizer state.</p>
+            <p class="weight-desc">Complete compiled Keras model containing custom CNN architecture, weights, and
+              optimizer state.</p>
             <div class="file-meta"><code>custom_asl_model.keras</code> &bull; 5.94 MB &bull; 98.4% Accuracy</div>
           </div>
           <a href="./models/custom_asl_model.keras" download id="download-custom-keras" class="btn btn-secondary">
@@ -352,7 +406,8 @@
           <div class="weight-icon">📐</div>
           <div class="weight-info">
             <h3 class="weight-title">Model Architecture Config</h3>
-            <p class="weight-desc">Full layer topology, convolution filters, pooling, and dropout rates in JSON format.</p>
+            <p class="weight-desc">Full layer topology, convolution filters, pooling, and dropout rates in JSON format.
+            </p>
             <div class="file-meta"><code>custom_model_architecture.json</code> &bull; 71 KB</div>
           </div>
           <a href="./models/custom_model_architecture.json" download id="download-custom-arch" class="btn btn-outline">
@@ -388,7 +443,8 @@
           <div class="weight-icon">📄</div>
           <div class="weight-info">
             <h3 class="weight-title">Comprehensive Project Report</h3>
-            <p class="weight-desc">Academic semester paper formatted in Microsoft Word with mathematical formulation.</p>
+            <p class="weight-desc">Academic semester paper formatted in Microsoft Word with mathematical formulation.
+            </p>
             <div class="file-meta"><code>ASL_Deep_Learning_Project_Report.docx</code> &bull; Word Document</div>
           </div>
           <a href="./ASL_Deep_Learning_Project_Report.docx" download id="download-docx" class="btn btn-outline">
@@ -495,16 +551,20 @@
           <h3 class="panel-heading">Dataset Specifications</h3>
           <ul class="dataset-specs-list">
             <li><strong>Dataset Name:</strong> ASL Alphabet Dataset</li>
-            <li><strong>Source Platform:</strong> Kaggle (<a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank" rel="noopener noreferrer" class="link-inline">grassknoted/asl-alphabet</a>)</li>
+            <li><strong>Source Platform:</strong> Kaggle (<a
+                href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank"
+                rel="noopener noreferrer" class="link-inline">grassknoted/asl-alphabet</a>)</li>
             <li><strong>Total Images:</strong> 87,000 training images (3,000 per class)</li>
             <li><strong>Number of Classes:</strong> 29 (26 Letters A-Z + 'del', 'nothing', 'space')</li>
             <li><strong>Original Resolution:</strong> 200 &times; 200 pixels, 3-Channel RGB</li>
             <li><strong>Model Input Resolution:</strong> 160 &times; 160 pixels (Rescaled to [0, 1])</li>
-            <li><strong>Data Augmentation:</strong> Random Rotation (&plusmn;8%), Translation (&plusmn;10%), Zoom (&plusmn;12%), Brightness (&plusmn;15%), Contrast (&plusmn;15%)</li>
+            <li><strong>Data Augmentation:</strong> Random Rotation (&plusmn;8%), Translation (&plusmn;10%), Zoom
+              (&plusmn;12%), Brightness (&plusmn;15%), Contrast (&plusmn;15%)</li>
           </ul>
           <div class="kaggle-link-banner">
             <span>Direct Kaggle Download:</span>
-            <a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">View on Kaggle &rarr;</a>
+            <a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet" target="_blank" rel="noopener noreferrer"
+              class="btn btn-outline btn-sm">View on Kaggle &rarr;</a>
           </div>
         </div>
 
@@ -522,13 +582,18 @@
         <div class="metrics-grid">
           <div class="metric-visual-card">
             <h4>Training & Validation Curves</h4>
-            <img src="./metrics/training_curves.png" alt="Training & Validation Accuracy and Loss Curves" class="metric-img" onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Training+Curves+Graph'">
-            <p class="metric-caption">Convergence of accuracy (up to 99.5%) and loss over epochs with early stopping.</p>
+            <img src="./metrics/training_curves.png" alt="Training & Validation Accuracy and Loss Curves"
+              class="metric-img"
+              onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Training+Curves+Graph'">
+            <p class="metric-caption">Convergence of accuracy (up to 99.5%) and loss over epochs with early stopping.
+            </p>
           </div>
           <div class="metric-visual-card">
             <h4>29x29 Confusion Matrix Heatmap</h4>
-            <img src="./metrics/confusion_matrix.png" alt="ASL 29x29 Confusion Matrix" class="metric-img" onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Confusion+Matrix+Heatmap'">
-            <p class="metric-caption">Strong diagonal intensity across all 29 classes demonstrating minimal cross-class confusion.</p>
+            <img src="./metrics/confusion_matrix.png" alt="ASL 29x29 Confusion Matrix" class="metric-img"
+              onerror="this.src='https://placehold.co/600x300/161e31/ffffff?text=Confusion+Matrix+Heatmap'">
+            <p class="metric-caption">Strong diagonal intensity across all 29 classes demonstrating minimal cross-class
+              confusion.</p>
           </div>
         </div>
       </div>
@@ -541,14 +606,17 @@
       <div class="section-header">
         <div class="badge-tag">Requirement 5</div>
         <h2 class="section-title">Comprehensive Project Article & Report</h2>
-        <p class="section-desc">Academic documentation generated for semester evaluation covering methodology, mathematical formulation, and findings.</p>
+        <p class="section-desc">Academic documentation generated for semester evaluation covering methodology,
+          mathematical formulation, and findings.</p>
       </div>
 
       <div class="report-container">
         <article class="academic-paper">
           <header class="paper-header">
-            <h3 class="paper-title">Deep Learning-Based American Sign Language (ASL) Recognition: Comparing Custom Convolutional Networks with Transfer Learning</h3>
-            <div class="paper-authors">Course: Deep Learning (CS-401) &bull; Semester Project Report &bull; Student: Mirza</div>
+            <h3 class="paper-title">Deep Learning-Based American Sign Language (ASL) Recognition: Comparing Custom
+              Convolutional Networks with Transfer Learning</h3>
+            <div class="paper-authors">Course: Deep Learning (CS-401) &bull; Semester Project Report &bull; Student:
+              Mirza</div>
             <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <a href="./ASL_Deep_Learning_Project_Report.docx" download class="btn btn-primary btn-sm">
                 📄 Download Word Report (.docx)
@@ -562,11 +630,15 @@
           <div class="paper-section">
             <h4 class="paper-section-title">1. Abstract</h4>
             <p>
-              American Sign Language (ASL) serves as the primary communication medium for millions of hearing-impaired individuals worldwide. 
-              Automated sign language translation using computer vision enables inclusive human-computer interaction. 
-              This paper presents the design, implementation, and empirical evaluation of two distinct deep learning paradigms for classifying 29 ASL hand gestures from 87,000 images: 
-              a <strong>Custom Deep Convolutional Neural Network (CNN)</strong> constructed from scratch with hierarchical feature extraction, and a <strong>MobileNetV2</strong> transfer learning model. 
-              The custom CNN achieves 98.4% test accuracy with 1.45M parameters, while MobileNetV2 achieves 99.6% accuracy. 
+              American Sign Language (ASL) serves as the primary communication medium for millions of hearing-impaired
+              individuals worldwide.
+              Automated sign language translation using computer vision enables inclusive human-computer interaction.
+              This paper presents the design, implementation, and empirical evaluation of two distinct deep learning
+              paradigms for classifying 29 ASL hand gestures from 87,000 images:
+              a <strong>Custom Deep Convolutional Neural Network (CNN)</strong> constructed from scratch with
+              hierarchical feature extraction, and a <strong>MobileNetV2</strong> transfer learning model.
+              The custom CNN achieves 98.4% test accuracy with 1.45M parameters, while MobileNetV2 achieves 99.6%
+              accuracy.
               Model weights were extracted, serialized, and deployed in a production-ready web application on Vercel.
             </p>
           </div>
@@ -574,13 +646,17 @@
           <div class="paper-section">
             <h4 class="paper-section-title">2. Problem Statement & Objectives</h4>
             <p>
-              Manual gesture recognition in video streams suffers from variations in skin tone, lighting conditions, hand morphology, and minor intra-class pose deviations (e.g., distinguishing letters 'M', 'N', and 'T'). 
+              Manual gesture recognition in video streams suffers from variations in skin tone, lighting conditions,
+              hand morphology, and minor intra-class pose deviations (e.g., distinguishing letters 'M', 'N', and 'T').
               Our primary objectives were:
             </p>
             <ul>
-              <li>To develop an end-to-end computer vision pipeline capable of classifying static hand gesture images into 29 discrete classes.</li>
-              <li>To architect a lightweight, multi-block Custom CNN from scratch without relying on pre-trained weights.</li>
-              <li>To extract, verify, and serialize raw weights (<code>.weights.h5</code>) for automated testing crawlers.</li>
+              <li>To develop an end-to-end computer vision pipeline capable of classifying static hand gesture images
+                into 29 discrete classes.</li>
+              <li>To architect a lightweight, multi-block Custom CNN from scratch without relying on pre-trained
+                weights.</li>
+              <li>To extract, verify, and serialize raw weights (<code>.weights.h5</code>) for automated testing
+                crawlers.</li>
               <li>To deploy an interactive web interface on Vercel enabling webcam-based real-time inference.</li>
             </ul>
           </div>
@@ -588,7 +664,8 @@
           <div class="paper-section">
             <h4 class="paper-section-title">3. Custom Deep CNN Architecture & Mathematical Formulation</h4>
             <p>
-              The custom architecture utilizes 4 sequential convolutional stages with progressive channel depth $(32 \to 64 \to 128 \to 256)$.
+              The custom architecture utilizes 4 sequential convolutional stages with progressive channel depth $(32 \to
+              64 \to 128 \to 256)$.
               Each convolution block performs the operation:
             </p>
             <div class="math-block">
@@ -598,43 +675,49 @@
               Spatial downsampling is achieved via non-overlapping $2 \times 2$ Max Pooling:
             </p>
             <div class="math-block">
-              $$p_{i,j} = \max_{0 \leq m, n < 2} x_{2i+m, 2j+n}$$
+              $$p_{i,j} = \max_{0 \leq m, n < 2} x_{2i+m, 2j+n}$$ </div>
+                <p>
+                  To eliminate parameter explosion associated with standard Flatten layers, Global Average Pooling
+                  computes spatial averages:
+                </p>
+                <div class="math-block">
+                  $$\text{GAP}(x_c) = \frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} x_c(i,j)$$
+                </div>
+                <p>
+                  Finally, class probabilities are produced via the multi-class Softmax function:
+                </p>
+                <div class="math-block">
+                  $$\sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}, \quad K = 29$$
+                </div>
             </div>
-            <p>
-              To eliminate parameter explosion associated with standard Flatten layers, Global Average Pooling computes spatial averages:
-            </p>
-            <div class="math-block">
-              $$\text{GAP}(x_c) = \frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} x_c(i,j)$$
-            </div>
-            <p>
-              Finally, class probabilities are produced via the multi-class Softmax function:
-            </p>
-            <div class="math-block">
-              $$\sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}, \quad K = 29$$
-            </div>
-          </div>
 
-          <div class="paper-section">
-            <h4 class="paper-section-title">4. Hyperparameters & Training Regularization</h4>
-            <p>
-              The model was compiled with the Adam optimizer ($\beta_1 = 0.9, \beta_2 = 0.999$, initial $\text{lr} = 0.001$).
-              Categorical cross-entropy with label smoothing factor $\alpha = 0.05$ was employed to prevent overconfidence:
-            </p>
-            <div class="math-block">
-              $$L_{\text{LS}} = -(1 - \alpha) \log(p_y) - \frac{\alpha}{K} \sum_{k=1}^{K} \log(p_k)$$
+            <div class="paper-section">
+              <h4 class="paper-section-title">4. Hyperparameters & Training Regularization</h4>
+              <p>
+                The model was compiled with the Adam optimizer ($\beta_1 = 0.9, \beta_2 = 0.999$, initial $\text{lr} =
+                0.001$).
+                Categorical cross-entropy with label smoothing factor $\alpha = 0.05$ was employed to prevent
+                overconfidence:
+              </p>
+              <div class="math-block">
+                $$L_{\text{LS}} = -(1 - \alpha) \log(p_y) - \frac{\alpha}{K} \sum_{k=1}^{K} \log(p_k)$$
+              </div>
+              <p>
+                An adaptive learning rate scheduler (<code>ReduceLROnPlateau</code>) decreased the learning rate by a
+                factor of $0.5$ whenever validation loss stagnated for 2 consecutive epochs.
+              </p>
             </div>
-            <p>
-              An adaptive learning rate scheduler (<code>ReduceLROnPlateau</code>) decreased the learning rate by a factor of $0.5$ whenever validation loss stagnated for 2 consecutive epochs.
-            </p>
-          </div>
 
-          <div class="paper-section">
-            <h4 class="paper-section-title">5. Weights Extraction & Verification</h4>
-            <p>
-              Weights were extracted through the Keras serialization API into HDF5 binary format (<code>custom_asl_weights.weights.h5</code>). 
-              An independent verification unit reconstructed a fresh model instance without weights, loaded the serialized tensor checkpoint via <code>model.load_weights()</code>, and verified that maximum prediction divergence remained strictly zero ($\Delta = 0.000000 \times 10^0$).
-            </p>
-          </div>
+            <div class="paper-section">
+              <h4 class="paper-section-title">5. Weights Extraction & Verification</h4>
+              <p>
+                Weights were extracted through the Keras serialization API into HDF5 binary format
+                (<code>custom_asl_weights.weights.h5</code>).
+                An independent verification unit reconstructed a fresh model instance without weights, loaded the
+                serialized tensor checkpoint via <code>model.load_weights()</code>, and verified that maximum prediction
+                divergence remained strictly zero ($\Delta = 0.000000 \times 10^0$).
+              </p>
+            </div>
         </article>
       </div>
     </div>
@@ -646,7 +729,8 @@
       <div class="section-header">
         <div class="badge-tag">Requirement 6 & 7</div>
         <h2 class="section-title">Presentation, Voiceover & Social Media</h2>
-        <p class="section-desc">Project presentation slide deck, YouTube demonstration video embed, and LinkedIn broadcast copy.</p>
+        <p class="section-desc">Project presentation slide deck, YouTube demonstration video embed, and LinkedIn
+          broadcast copy.</p>
       </div>
 
       <div class="presentation-grid">
@@ -657,7 +741,8 @@
             <div class="slide-display" id="slide-display">
               <div class="slide-badge" id="slide-num">Slide 1 / 10</div>
               <h4 class="slide-title" id="slide-title">ASL Alphabet Recognition with Deep Learning</h4>
-              <p class="slide-subtitle" id="slide-subtitle">Semester Project Presentation &bull; Team & Problem Overview</p>
+              <p class="slide-subtitle" id="slide-subtitle">Semester Project Presentation &bull; Team & Problem Overview
+              </p>
               <ul class="slide-bullets" id="slide-bullets">
                 <li>Automated hand sign gesture recognition for deaf & mute communication.</li>
                 <li>Dataset of 87,000 images covering 29 ASL classes.</li>
@@ -668,7 +753,8 @@
               <button class="btn btn-outline btn-sm" id="btn-prev-slide" onclick="prevSlide()">&larr; Previous</button>
               <span class="slide-counter" id="slide-counter-text">1 of 10</span>
               <button class="btn btn-outline btn-sm" id="btn-next-slide" onclick="nextSlide()">Next &rarr;</button>
-              <a href="./ASL_Deep_Learning_Presentation.pptx" download class="btn btn-primary btn-sm" id="btn-download-deck" style="margin-left: 1rem;">
+              <a href="./ASL_Deep_Learning_Presentation.pptx" download class="btn btn-primary btn-sm"
+                id="btn-download-deck" style="margin-left: 1rem;">
                 📥 Download PPTX Deck
               </a>
             </div>
@@ -678,11 +764,17 @@
         <!-- YouTube Video & Voiceover Embed -->
         <div class="presentation-card">
           <h3 class="panel-heading">YouTube Demonstration & Voiceover Video</h3>
-          <div class="video-embed-wrapper" style="border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
-            <iframe width="100%" height="280" src="https://www.youtube.com/embed/ZnWb24NQmps" title="ASL Alphabet Deep Learning Project Presentation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block; border-radius: 12px;"></iframe>
+          <div class="video-embed-wrapper"
+            style="border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+            <iframe width="100%" height="280" src="https://www.youtube.com/embed/ZnWb24NQmps"
+              title="ASL Alphabet Deep Learning Project Presentation" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen style="display: block; border-radius: 12px;"></iframe>
           </div>
-          <div style="margin-top: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-            <a href="https://youtu.be/ZnWb24NQmps" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+          <div
+            style="margin-top: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <a href="https://youtu.be/ZnWb24NQmps" target="_blank" rel="noopener noreferrer"
+              class="btn btn-primary btn-sm">
               ▶️ Watch on YouTube
             </a>
             <a href="./ASL_Project_Presentation_Video.mp4" download class="btn btn-outline btn-sm">
@@ -691,7 +783,10 @@
           </div>
           <div class="voiceover-box" style="margin-top: 1rem;">
             <span class="voiceover-label">YouTube Video Link:</span>
-            <p class="voiceover-snippet"><a href="https://youtu.be/ZnWb24NQmps" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline;">https://youtu.be/ZnWb24NQmps</a> (Presented by Mirza Muhammad Hannan Baber)</p>
+            <p class="voiceover-snippet"><a href="https://youtu.be/ZnWb24NQmps" target="_blank"
+                rel="noopener noreferrer"
+                style="color: #38bdf8; text-decoration: underline;">https://youtu.be/ZnWb24NQmps</a> (Presented by Mirza
+              Muhammad Hannan Baber)</p>
           </div>
         </div>
       </div>
@@ -699,29 +794,50 @@
       <!-- LinkedIn Post Card -->
       <div class="linkedin-card">
         <div class="linkedin-header">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#0a66c2">
+            <path
+              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+          </svg>
           <span class="linkedin-title">Ready-to-Share LinkedIn Project Post (Requirement 7)</span>
-          <button class="btn btn-outline btn-sm" onclick="copyLinkedInPost()" id="btn-copy-linkedin">Copy Post Text</button>
+          <button class="btn btn-outline btn-sm" onclick="copyLinkedInPost()" id="btn-copy-linkedin">Copy Post
+            Text</button>
         </div>
         <textarea id="linkedin-text" class="linkedin-textarea" readonly>
-🚀 Excited to share our Deep Learning Semester Project: American Sign Language (ASL) Alphabet Recognition System! 🤟
+🚀 Excited to Showcase Our Deep Learning Semester Project: American Sign Language (ASL) Alphabet Recognition System! 🤟
 
-We designed and trained a Custom Deep Convolutional Neural Network (CNN) from scratch on 87,000 gesture images across 29 classes, achieving 98.4% test accuracy! 🎯
+We developed an end-to-end ASL recognition system using Deep Learning and Computer Vision, capable of recognizing hand gestures through real-time webcam detection.
 
-Key Project Highlights:
-✅ Custom CNN Architecture with 4 Convolutional stages, BatchNorm, and Dropout
-✅ Extracted and verified standalone model weights (.weights.h5)
-✅ Live Interactive Web App with Webcam Detection deployed on Vercel
-✅ Benchmark comparison against Transfer Learning (MobileNetV2: 99.6% accuracy)
+🧠 Key Project Highlights:
 
-Student: Mirza Muhammad Hannan Baber (SU92-BSCSM-F23-615) | Section: BSCS-7A
-Supervisor: Prof. Dr Munir Ahmed | Department of Computer Science
+📦 87,000 Gesture Images: Trained on a dataset covering 29 different classes.
 
-🔗 Live Vercel Demo: [YOUR-VERCEL-URL]
-📂 GitHub Repository: https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning
-🎥 YouTube Walkthrough: https://youtu.be/ZnWb24NQmps
+🏗️ Custom CNN Architecture: Designed and trained a 4-stage Convolutional Neural Network from scratch using Batch Normalization and Dropout.
 
-#DeepLearning #ComputerVision #MachineLearning #TensorFlow #ASL #AI #Vercel #Python #CNN
+🏆 Model Performance:
+
+MobileNetV2 (Transfer Learning): 99.6% Accuracy.
+
+⚡ Real-Time Web Application: Integrated live webcam detection and deployed the application on Vercel.
+
+💾 Extracted and verified standalone model weights (.weights.h5).
+
+🛠️ Technologies: Python, TensorFlow, Keras, CNN, OpenCV, Computer Vision.
+
+👨‍🎓 Student: Mirza Muhammad Hannan Baber (SU92-BSCSM-F23-615) | Section: BSCS-7A
+
+Supervisor: Professor. Dr. Munir Ahmad | Department of Computer Science
+
+🔗 Project Links:
+
+🌐 Live Demo: https://lnkd.in/dqWtaN-i
+
+💻 GitHub: https://lnkd.in/dW-i2aZc
+
+🎬 YouTube Walkthrough: https://lnkd.in/daGQHc99
+
+Grateful to our supervisor for his valuable guidance throughout this project! 🙏
+
+#DeepLearning #ComputerVision #MachineLearning #TensorFlow #ASL #CNN #AI #Vercel #Python
         </textarea>
       </div>
     </div>
@@ -733,7 +849,8 @@ Supervisor: Prof. Dr Munir Ahmed | Department of Computer Science
       <div class="footer-brand">
         <span class="brand-badge">🤟 ASL Recognizer</span>
         <p class="footer-tagline">
-          Developed by: <strong>Mirza Muhammad Hannan Baber</strong> (<code>SU92-BSCSM-F23-615</code>) &bull; Section: <code>BSCS-7A</code><br>
+          Developed by: <strong>Mirza Muhammad Hannan Baber</strong> (<code>SU92-BSCSM-F23-615</code>) &bull; Section:
+          <code>BSCS-7A</code><br>
           Supervised by: <strong>Prof. Dr Munir Ahmed</strong> &bull; Department of Computer Science
         </p>
       </div>
@@ -743,9 +860,11 @@ Supervisor: Prof. Dr Munir Ahmed | Department of Computer Science
         <a href="#dataset">Dataset</a>
         <a href="#report">Project Report</a>
         <a href="#presentation">Presentation</a>
-        <a href="https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning" target="_blank"
+          rel="noopener noreferrer">GitHub</a>
       </div>
-      <div class="footer-copy">&copy; 2026 ASL Recognition Project &bull; CS-401 Deep Learning Semester Project &bull; Automated Evaluation Ready.</div>
+      <div class="footer-copy">&copy; 2026 ASL Recognition Project &bull; CS-401 Deep Learning Semester Project &bull;
+        Automated Evaluation Ready.</div>
     </div>
   </footer>
 
@@ -755,4 +874,5 @@ Supervisor: Prof. Dr Munir Ahmed | Department of Computer Science
   <script src="config.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
