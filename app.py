@@ -153,6 +153,13 @@ def serve_static(filename):
 @app.route("/api/health", methods=["GET"])
 def health_check():
     """Automated crawler health check endpoint."""
+    # If models are still initializing, wait up to 10 seconds so client receives both models immediately
+    if len(models_cache) < 2 and not models_errors:
+        for _ in range(20):
+            if len(models_cache) >= 2 or models_errors:
+                break
+            time.sleep(0.5)
+
     return jsonify({
         "status": "healthy" if models_cache else "initializing",
         "service": "ASL Alphabet Recognition API",

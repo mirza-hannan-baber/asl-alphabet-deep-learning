@@ -18,7 +18,8 @@
         <span class="brand-badge">🤟 AI & DL</span>
         <span class="brand-title">ASL Recognizer</span>
       </div>
-      <nav class="nav-links">
+      <button class="mobile-nav-toggle" id="btn-mobile-nav" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <nav class="nav-links" id="main-nav-links">
         <a href="#demo" class="nav-link active" data-target="demo">Live Demo</a>
         <a href="#models" class="nav-link" data-target="models">Model & Weights</a>
         <a href="#dataset" class="nav-link" data-target="dataset">Dataset</a>
@@ -44,16 +45,16 @@
       </p>
 
       <!-- Student & Supervisor Profile Banner -->
-      <div class="student-meta-banner" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 14px 22px; margin: 18px auto 26px auto; max-width: 820px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 16px; text-align: left; backdrop-filter: blur(8px);">
-        <div>
-          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; display: block; font-weight: 700;">👨‍🎓 Student &amp; Presenter</span>
-          <strong style="color: #f8fafc; font-size: 1.05rem;">Mirza Muhammad Hannan Baber</strong>
-          <span style="display: block; font-size: 0.85rem; color: #94a3b8;">Roll: <code>SU92-BSCSM-F23-615</code> &bull; Section: <code>BSCS-7A</code></span>
+      <div class="student-meta-banner">
+        <div class="meta-profile-item">
+          <span class="meta-role-label student-label">👨‍🎓 Student &amp; Presenter</span>
+          <strong class="meta-name">Mirza Muhammad Hannan Baber</strong>
+          <span class="meta-sub">Roll: <code>SU92-BSCSM-F23-615</code> &bull; Section: <code>BSCS-7A</code></span>
         </div>
-        <div style="border-left: 1px solid rgba(148, 163, 184, 0.25); padding-left: 20px;">
-          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #f59e0b; display: block; font-weight: 700;">👨‍🏫 Project Supervisor</span>
-          <strong style="color: #f8fafc; font-size: 1.05rem;">Prof. Dr Munir Ahmed</strong>
-          <span style="display: block; font-size: 0.85rem; color: #94a3b8;">Department of Computer Science</span>
+        <div class="meta-profile-item supervisor-item">
+          <span class="meta-role-label supervisor-label">👨‍🏫 Project Supervisor</span>
+          <strong class="meta-name">Prof. Dr Munir Ahmed</strong>
+          <span class="meta-sub">Department of Computer Science</span>
         </div>
       </div>
       

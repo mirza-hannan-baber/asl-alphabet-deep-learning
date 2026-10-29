@@ -910,12 +910,27 @@ async function checkBackendHealth() {
 
     if (res.ok) {
       const data = await res.json();
+      const loadedCount = (data.loaded_models && data.loaded_models.length) || 0;
+
+      // If backend responded but models are still being loaded in memory by server:
+      if (loadedCount === 0 || data.status === "initializing") {
+        if (dot) {
+          dot.style.background = "#f59e0b";
+          dot.style.boxShadow = "0 0 10px #f59e0b";
+        }
+        if (label) label.textContent = `🟡 Server Initializing Models (${displayHost})...`;
+        if (modeCode) modeCode.textContent = "Warming up Neural Network...";
+        // Auto-poll after 2.5 seconds - no manual button press needed!
+        setTimeout(checkBackendHealth, 2500);
+        return;
+      }
+
       if (dot) {
         dot.style.background = "#10b981";
         dot.style.boxShadow = "0 0 10px #10b981";
       }
       if (label) label.textContent = `🟢 Connected: ${displayHost}`;
-      if (modeCode) modeCode.textContent = `Live Neural Backend (${data.loaded_models ? data.loaded_models.length : 2} Models Active)`;
+      if (modeCode) modeCode.textContent = `Live Neural Backend (${loadedCount} Models Active)`;
     } else {
       throw new Error(`HTTP ${res.status}`);
     }
@@ -926,8 +941,10 @@ async function checkBackendHealth() {
       dot.style.background = "#ef4444";
       dot.style.boxShadow = "0 0 10px #ef4444";
     }
-    if (label) label.textContent = `🔴 Offline (${displayHost}) - Click ⚙️ to change`;
-    if (modeCode) modeCode.textContent = "Backend Offline (Click ⚙️ to Connect)";
+    if (label) label.textContent = `🔴 Offline (${displayHost}) - Auto-reconnecting...`;
+    if (modeCode) modeCode.textContent = "Backend Offline (Auto-Reconnecting...)";
+    // Auto-retry reconnecting in 5 seconds without user having to click anything
+    setTimeout(checkBackendHealth, 5000);
   }
 }
 
@@ -1018,7 +1035,7 @@ function initBackendManager() {
   }
 
   // Periodic Keep-Alive Ping: Render free tier spins down after 15 min of inactivity.
-  // Pinging /api/health every 3.5 minutes while the browser tab is open keeps Render warm and awake.
+  // Pinging /api/health every 2 minutes while the browser tab is open keeps Render warm and awake.
   setInterval(() => {
     const url = getBackendBaseUrl();
     if (url && url.includes("onrender.com")) {
@@ -1028,7 +1045,7 @@ function initBackendManager() {
         })
         .catch(() => {});
     }
-  }, 3.5 * 60 * 1000);
+  }, 2 * 60 * 1000);
 
   // Wake / verify health when user switches back to this tab
   document.addEventListener("visibilitychange", () => {
@@ -1036,15 +1053,44 @@ function initBackendManager() {
       checkBackendHealth();
     }
   });
+  window.addEventListener("focus", () => {
+    checkBackendHealth();
+  });
 
   // Initial check on page load
   checkBackendHealth();
 }
 
+// Mobile Navigation Toggle
+function initMobileNav() {
+  const toggleBtn = document.getElementById("btn-mobile-nav");
+  const navLinks = document.getElementById("main-nav-links");
+  if (!toggleBtn || !navLinks) return;
+
+  toggleBtn.addEventListener("click", () => {
+    navLinks.classList.toggle("nav-open");
+    const isOpen = navLinks.classList.contains("nav-open");
+    toggleBtn.setAttribute("aria-expanded", isOpen);
+    toggleBtn.innerHTML = isOpen ? "✕" : "☰";
+  });
+
+  navLinks.querySelectorAll(".nav-link, .btn-nav").forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("nav-open");
+      toggleBtn.innerHTML = "☰";
+    });
+  });
+}
+
 // Initialize on DOM load
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initBackendManager);
-} else {
+function onAppInit() {
   initBackendManager();
+  initMobileNav();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", onAppInit);
+} else {
+  onAppInit();
 }
 
