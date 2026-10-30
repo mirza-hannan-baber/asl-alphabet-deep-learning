@@ -124,8 +124,6 @@ const SLIDES_DATA = [
 ];
 
 let currentSlideIdx = 0;
-let webcamStream = null;
-let isWebcamRunning = false;
 let currentImageDataUrl = null;
 
 // Initialize on DOM Ready
@@ -245,7 +243,7 @@ function convertImgToDataUrl(imgEl, callback) {
   tempImg.src = imgEl.src;
 }
 
-// Switch Demo Tabs (Upload / Webcam / Samples)
+// Switch Demo Tabs (Upload / Samples)
 function switchDemoMode(mode) {
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelectorAll(".tab-content").forEach(content => content.classList.add("hidden"));
@@ -254,10 +252,6 @@ function switchDemoMode(mode) {
   const targetContent = document.getElementById(`content-${mode}`);
   if (targetTab) targetTab.classList.add("active");
   if (targetContent) targetContent.classList.remove("hidden");
-
-  if (mode !== "webcam" && isWebcamRunning) {
-    stopWebcam();
-  }
 }
 
 // Setup Drag & Drop File Upload
@@ -702,77 +696,6 @@ function updateProbRow(rank, className, confidence) {
   if (nameEl) nameEl.textContent = className !== "-" ? `Sign: ${className}` : "-";
   if (barEl) barEl.style.width = `${(confidence * 100).toFixed(1)}%`;
   if (valEl) valEl.textContent = `${(confidence * 100).toFixed(1)}%`;
-}
-
-// Toggle Live Webcam
-async function toggleWebcam() {
-  const video = document.getElementById("webcam-video");
-  const btnToggle = document.getElementById("btn-toggle-cam");
-  const btnSnap = document.getElementById("btn-snap-cam");
-
-  if (!isWebcamRunning) {
-    try {
-      webcamStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
-      });
-      video.srcObject = webcamStream;
-      isWebcamRunning = true;
-      btnToggle.textContent = "Stop Webcam";
-      btnToggle.classList.replace("btn-primary", "btn-secondary");
-      btnSnap.classList.remove("hidden");
-    } catch (err) {
-      console.error("Webcam error:", err);
-      alert("Could not access webcam. Please check camera permissions in your browser.");
-    }
-  } else {
-    stopWebcam();
-  }
-}
-
-function stopWebcam() {
-  const video = document.getElementById("webcam-video");
-  const btnToggle = document.getElementById("btn-toggle-cam");
-  const btnSnap = document.getElementById("btn-snap-cam");
-
-  if (webcamStream) {
-    webcamStream.getTracks().forEach(track => track.stop());
-    webcamStream = null;
-  }
-  if (video) video.srcObject = null;
-  isWebcamRunning = false;
-  btnToggle.textContent = "Start Webcam";
-  btnToggle.classList.replace("btn-secondary", "btn-primary");
-  btnSnap.classList.add("hidden");
-}
-
-function captureWebcamFrame() {
-  if (!isWebcamRunning) return;
-  const video = document.getElementById("webcam-video");
-  const canvas = document.getElementById("webcam-canvas");
-  if (!video || !canvas) return;
-
-  canvas.width = 160;
-  canvas.height = 160;
-  const ctx = canvas.getContext("2d");
-  
-  // Crop center square
-  const minDim = Math.min(video.videoWidth, video.videoHeight);
-  const startX = (video.videoWidth - minDim) / 2;
-  const startY = (video.videoHeight - minDim) / 2;
-
-  ctx.drawImage(video, startX, startY, minDim, minDim, 0, 0, 160, 160);
-  currentImageDataUrl = canvas.toDataURL("image/jpeg", 0.92);
-
-  // Show in Active Image card
-  const previewCard = document.getElementById("active-image-card");
-  const previewImg = document.getElementById("active-preview-img");
-  const fileNameEl = document.getElementById("active-img-name");
-
-  previewImg.src = currentImageDataUrl;
-  fileNameEl.textContent = "Webcam_Snapshot.jpg";
-  previewCard.style.display = "block";
-
-  predictCurrentImage();
 }
 
 function onModelChange() {

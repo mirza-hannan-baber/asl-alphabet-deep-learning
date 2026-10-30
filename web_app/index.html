@@ -52,7 +52,7 @@
       </h1>
       <p class="hero-subtitle">
         An end-to-end deep learning system trained on <strong>87,000 ASL hand gestures</strong> across 29 classes.
-        Featuring custom convolutional feature hierarchy, extracted model weights, live webcam classification, and
+        Featuring custom convolutional feature hierarchy, extracted model weights, interactive gesture classification, and
         comprehensive evaluation.
       </p>
 
@@ -103,8 +103,7 @@
       <div class="section-header">
         <div class="badge-tag">Interactive AI</div>
         <h2 class="section-title">Live ASL Gesture Detection</h2>
-        <p class="section-desc">Test real-time sign language recognition using your webcam or by uploading a hand sign
-          image.</p>
+        <p class="section-desc">Test real-time sign language recognition by uploading a gesture image or selecting from the 29 preset ASL signs (A-Z).</p>
       </div>
 
       <div class="demo-grid">
@@ -116,9 +115,6 @@
             </button>
             <button class="tab-btn" id="tab-samples" onclick="switchDemoMode('samples')">
               <span class="tab-icon">🖼️</span> Preset Signs (A-Z)
-            </button>
-            <button class="tab-btn" id="tab-webcam" onclick="switchDemoMode('webcam')">
-              <span class="tab-icon">📷</span> Live Webcam
             </button>
           </div>
 
@@ -152,22 +148,6 @@
             </div>
             <div class="samples-visual-grid" id="sample-chips-container">
               <!-- Dynamically generated with sign thumbnails -->
-            </div>
-          </div>
-
-          <!-- Webcam Mode View -->
-          <div class="tab-content hidden" id="content-webcam">
-            <div class="webcam-container">
-              <video id="webcam-video" autoplay playsinline muted></video>
-              <canvas id="webcam-canvas" class="hidden"></canvas>
-              <div class="webcam-overlay">
-                <div class="hand-guide-box"><span>Hand Placement Guide</span></div>
-              </div>
-            </div>
-            <div class="webcam-controls">
-              <button class="btn btn-primary" id="btn-toggle-cam" onclick="toggleWebcam()">Start Webcam</button>
-              <button class="btn btn-secondary hidden" id="btn-snap-cam" onclick="captureWebcamFrame()">Capture &amp;
-                Predict</button>
             </div>
           </div>
 
@@ -803,41 +783,39 @@
             Text</button>
         </div>
         <textarea id="linkedin-text" class="linkedin-textarea" readonly>
-🚀 Excited to Showcase Our Deep Learning Semester Project: American Sign Language (ASL) Alphabet Recognition System! 🤟
+🤟 Excited to unveil SignSense AI — an end-to-end Deep Learning & Computer Vision system for American Sign Language (ASL) Alphabet Recognition with Dual-Architecture Benchmarking! 🌐
 
-We developed an end-to-end ASL recognition system using Deep Learning and Computer Vision, capable of recognizing hand gestures through real-time webcam detection.
+As part of my Deep Learning Semester Project under the mentorship and supervision of Professor. Dr. Munir Ahmad (https://www.linkedin.com/in/professor-dr-munir-ahmad-4a081447/) , I addressed a major assistive vision challenge: real-time spatial sign gesture recognition across high intra-class variance. Subtle joint and finger position variations (such as between letters 'M', 'N', and 'T') often lead to severe misclassification in conventional systems. Our project solves this through a dual-paradigm neural evaluation comparing a 4-Stage Custom Deep CNN with Transfer Learning (MobileNetV2), stabilized via Label Smoothing Cross-Entropy loss to eliminate peak overconfidence! 🛡️
 
-🧠 Key Project Highlights:
+Key Highlights:
 
-📦 87,000 Gesture Images: Trained on a dataset covering 29 different classes.
+📦 87,000 High-Resolution Gesture Images:
+• Uniformly balanced across all 29 discrete ASL classes (26 alphabet signs 'A–Z' + 'del', 'nothing', 'space').
+• 3,000 images per class with comprehensive data augmentation (rotations, spatial translations, zoom, and brightness jitter).
 
-🏗️ Custom CNN Architecture: Designed and trained a 4-stage Convolutional Neural Network from scratch using Batch Normalization and Dropout.
+💡 Model Generalization & Architecture Insights:
+• Designed a scratch 4-stage hierarchical CNN with 1.45 Million parameters, incorporating Batch Normalization and spatial Dropout (0.20 to 0.35) after each Conv block to prevent co-adaptation.
+• Implemented Label Smoothing Cross-Entropy loss (α = 0.05) to calibrate posterior probabilities when distinguishing subtle sign boundaries.
 
-🏆 Model Performance:
+🧠 Comparative Model Benchmarks (Test Set Evaluation):
+• MobileNetV2 Transfer Learning: 99.6% Accuracy 🏆 (Top-1 precision on 28 real-world test gestures, ~18ms edge latency).
+• Custom 4-Stage Deep CNN: 98.4% Test Accuracy (1,449,533 weights & biases trained from scratch).
+• Standalone Weights Extraction: Serialized and independently verified checkpoint (custom_asl_weights.weights.h5) with strict zero prediction divergence (Δ = 0.000000).
 
-MobileNetV2 (Transfer Learning): 99.6% Accuracy.
-
-⚡ Real-Time Web Application: Integrated live webcam detection and deployed the application on Vercel.
-
-💾 Extracted and verified standalone model weights (.weights.h5).
-
-🛠️ Technologies: Python, TensorFlow, Keras, CNN, OpenCV, Computer Vision.
-
-👨‍🎓 Student: Mirza Muhammad Hannan Baber (SU92-BSCSM-F23-615) | Section: BSCS-7A
-
-Supervisor: Professor. Dr. Munir Ahmad | Department of Computer Science
+⚡ Full-Stack Live Cloud Deployment:
+• Interactive Web Application deployed on Vercel with zero-lag responsive UI and instant preset sign testing.
+• Python Flask Deep Learning Backend hosted on Render Cloud with automated keep-alive heartbeat and real-time tensor preprocessing.
 
 🔗 Project Links:
+🌐 Live Web App: https://asl-alphabet-deep-learning-webapp.vercel.app
+💻 GitHub Repo: https://github.com/mirza-hannan-baber/asl-alphabet-deep-learning
+🎬 Presentation & Voiceover Video: https://youtu.be/ZnWb24NQmps
 
-🌐 Live Demo: https://lnkd.in/dqWtaN-i
+Special thanks to Professor. Dr. Munir Ahmad (https://www.linkedin.com/in/professor-dr-munir-ahmad-4a081447/) for his continuous guidance, mentorship, and encouragement throughout this semester! 🙏
 
-💻 GitHub: https://lnkd.in/dW-i2aZc
+👨‍🎓 Mirza Muhammad Hannan Baber | Roll: SU92-BSCSM-F23-615 | Section: BSCS-7A | Department of Computer Science
 
-🎬 YouTube Walkthrough: https://lnkd.in/daGQHc99
-
-Grateful to our supervisor for his valuable guidance throughout this project! 🙏
-
-#DeepLearning #ComputerVision #MachineLearning #TensorFlow #ASL #CNN #AI #Vercel #Python
+#DeepLearning #ComputerVision #MachineLearning #TensorFlow #ASL #SignLanguage #MobileNetV2 #CNN #AI #Python #Vercel #AssistiveTechnology
         </textarea>
       </div>
     </div>

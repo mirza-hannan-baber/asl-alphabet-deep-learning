@@ -417,27 +417,35 @@ code, pre {
 
 .card-tabs {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 12px;
   margin-bottom: 18px;
 }
 .tab-btn {
+  flex: 1;
   background: transparent;
-  border: none;
+  border: 1px solid var(--border-color);
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 10px 16px;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: all var(--transition-fast);
 }
 .tab-btn:hover {
   color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .tab-btn.active {
   background: rgba(124, 58, 237, 0.2);
+  border-color: var(--border-focus);
   color: #c084fc;
 }
 
@@ -658,52 +666,6 @@ code, pre {
   color: var(--text-primary);
   margin-top: 3px;
   display: block;
-}
-
-.webcam-container {
-  position: relative;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: #000;
-  height: 230px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#webcam-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.webcam-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-.hand-guide-box {
-  width: 150px;
-  height: 150px;
-  border: 2px dashed rgba(6, 182, 212, 0.7);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 8px;
-}
-.hand-guide-box span {
-  font-size: 0.75rem;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--accent-cyan);
-}
-.webcam-controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
 }
 
 .model-selector-bar {
@@ -1540,10 +1502,10 @@ code, pre {
     gap: 6px;
   }
   .tab-btn {
-    flex: 1 1 30%;
-    min-width: 100px;
-    padding: 8px 6px;
-    font-size: 0.8rem;
+    flex: 1 1 45%;
+    min-width: 110px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
     text-align: center;
   }
   .drop-zone {
